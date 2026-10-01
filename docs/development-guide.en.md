@@ -1,0 +1,167 @@
+# Ahead Development Guide
+
+[简体中文](./development-guide.md)
+
+For the data model, RPC contract, and request flows see the
+[architecture guide](./architecture.en.md); for the review workflow and quality gate see the
+[contributing guide](../CONTRIBUTING.md).
+
+## Local environment
+
+- Node.js 20.9 or newer (validated by the `engines` field in `package.json`)
+- pnpm 11.21.0 (pinned by `packageManager`)
+- An optional Supabase development project
+
+```bash
+pnpm install --frozen-lockfile
+cp .env.example .env.local
+pnpm dev
+```
+
+`pnpm dev` starts the Turbopack dev server on port 4433, and `pnpm start` serves the
+production build on the same port:
+
+```bash
+pnpm build
+pnpm start
+```
+
+`dev`, `build`, and `start` all honour `NEXT_DIST_DIR` and write to `.next` by default.
+`pnpm test:e2e` runs `pnpm build` first and then serves the result with `next start`, so the
+suite exercises the real production output; the trade-off is that an E2E run replaces the
+local `.next` build, so rerun `pnpm build` afterwards.
+
+The only environment variables are:
+
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+```
+
+Without both values, the app uses a read-only demo mode that exposes the workspace, editor, public page, and sample reservation flow.
+
+## Local Supabase
+
+Local database development requires a Docker-compatible runtime and the Supabase CLI.
+`supabase/config.toml` runs the complete `supabase/platform.sql` file whenever the local
+database is reset:
+
+```bash
+supabase start
+supabase db reset
+```
+
+The default database URL is `postgresql://postgres:postgres@127.0.0.1:54322/postgres`. Run
+`supabase stop` when finished, and never commit local keys printed by `supabase status`.
+
+`platform.sql` is the single authoritative full schema. `update.sql` contains only
+the current pending production upgrade, is excluded from `db reset`, and must always be fully
+merged back into the complete SQL. After an upgrade is applied, replace this file with the next
+database change instead of retaining executed incremental scripts.
+
+## Structure
+
+| Path | Responsibility |
+| --- | --- |
+| `src/app/` | Pages, layouts, Server Actions, and Route Handlers |
+| `src/components/` | Product components and shadcn/ui primitives |
+| `src/lib/` | Auth, queries, validation, presets, and Supabase helpers |
+| `src/types/database.ts` | Database and product types |
+| `supabase/platform.sql` | Repeatable all-in-one database and Storage initialization |
+| `supabase/update.sql` | Current pending subscription-entry and media Storage policy upgrade |
+| `tests/unit/` | Vitest unit coverage |
+| `tests/e2e/` | Playwright user-flow coverage |
+
+## Product and source-link configuration
+
+`src/lib/product-config.ts` centralizes the Ahead product name, wordmark, home path, plus the
+product credit and GitHub repository URL shown in public project page footers. It promotes the
+Ahead project itself; it is not user-configured project or template content and is not copied into
+draft or published snapshots:
+
+```ts
+export const productConfig = {
+  name: "Ahead",
+  wordmark: "AHEAD",
+  homePath: "/",
+  productCredit: {
+    label: "MADE WITH AHEAD",
+    description: "开源功能预告与预约订阅系统",
+    year: "2026",
+    githubUrl: "https://github.com/chaos-design/presale-subscribe",
+  },
+} as const
+```
+
+Before deployment, confirm `githubUrl` points at the public source repository for that deployment. The
+public reservation page renders it as an icon-only external link and opens it in a new tab. Editor
+previews display the icon without navigation. After changing this configuration, run `pnpm check`
+and `pnpm build`, then verify that the footer does not overflow on desktop or mobile.
+
+## Primary routes
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Product home and template showcase |
+| `/login` | Password and OTP sign-in plus registration |
+| `/forgot-password` / `/reset-password` | Password recovery flow |
+| `/terms` / `/privacy` | Terms of service and privacy policy |
+| `/dashboard` | Template library, campaign library, and account settings |
+| `/dashboard/analytics` | PV/UV, source, device, conversion, and questionnaire analytics |
+| `/p/[slug]` | Public reservation page backed only by a published snapshot |
+
+## Product boundaries
+
+- `subscription_campaigns.draft_config` stores editable content.
+- Publishing copies the draft to `published_config`; public pages only read that snapshot.
+- Feature copy, long-form content, image and video URLs, templates, granular motion settings, and
+  questionnaire definitions all live in the same snapshot.
+- Images and videos upload to the public-read `campaign-media` bucket with owner and campaign path
+  isolation. The client limits images to 8 MB and videos to 100 MB.
+- Withdrawing a campaign preserves drafts and subscribers while disabling public access.
+- Public reservations write emails and `answers` through `subscribe_to_campaign`, remain
+  idempotent by campaign and email, and link visits only through SHA-256-hashed random visitor
+  and session identifiers.
+- Public reservations accept common email providers such as Gmail, Outlook, QQ, 163, and iCloud;
+  the frontend, Server Action, and RPC enforce the same allowlist.
+- Server Actions and the RPC both validate responses against published questions, required rules,
+  and choice allowlists.
+- Public pages report views and engagement through `track_campaign_page_view` and
+  `track_campaign_page_engagement`, including active duration, maximum scroll depth, and
+  interaction count. The database does not store IP addresses, raw User-Agent values, or precise
+  location.
+- Country, region, and city come first from coarse hosting-platform request headers. When fields
+  are missing, a short-timeout server-side IP geolocation request fills them in; only country,
+  region, and city are stored, never the source IP. Browser locale and timezone add context.
+- The dashboard combines `get_campaign_analytics` and `get_campaign_behavior_analytics` to report
+  traffic, conversion, engagement, geography, and questionnaire results for one selected project.
+- RLS isolates management data by the authenticated campaign owner.
+
+## Quality checks
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:e2e
+pnpm build
+```
+
+`pnpm check` runs Biome, TypeScript, and unit tests from `tests/unit`. Playwright runs from
+`tests/e2e`, explicitly clears Supabase variables, and tests demo mode, so it never connects to
+local or production data.
+
+## Conventions
+
+- Frontend filenames use lowercase kebab-case; functions use camelCase.
+- Keep business writes in Server Actions or server routes.
+- The browser Supabase client handles authentication and RLS-scoped campaign media uploads; it
+  does not read or write business tables.
+- When adding campaign fields, update types, Zod validation, defaults, stored JSON, and the editor together.
+- Merge every database change into `platform.sql`. When an incremental release is needed,
+  replace `update.sql` and update the types, README, and deployment guide. Do not retain
+  incremental scripts that have already been applied.
+
+The full extension checklist lives in the
+[architecture guide](./architecture.en.md#8-extension-checklist); report vulnerabilities as
+described in [SECURITY.md](../SECURITY.md).
