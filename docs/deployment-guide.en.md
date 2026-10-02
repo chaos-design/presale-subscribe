@@ -2,9 +2,10 @@
 
 [简体中文](./deployment-guide.md)
 
-This guide covers production deployment of Ahead on Vercel and Supabase. GitHub Actions is the
-only deployment entry point. `vercel.json` disables automatic Vercel Git deployments so that one
-commit is not built and deployed twice.
+This guide covers production deployment of Ahead on Vercel and Supabase. Vercel's Git
+integration owns the automatic Production deployment triggered by a push to `main`. GitHub
+Actions owns the quality gate, build artifact retention, approval-gated production releases, and
+rollback.
 
 For the data model and trust boundaries see the [architecture guide](./architecture.en.md), for
 repository access and the review gate see the [contributing guide](../CONTRIBUTING.md), and for
@@ -15,9 +16,17 @@ the private reporting channel see [SECURITY.md](../SECURITY.md).
 - Vercel runs the Next.js 16 application, Server Actions, and Route Handlers.
 - Supabase provides Auth, Postgres, Storage, RLS, and narrow public RPCs.
 - Pull requests are validated by `.github/workflows/ci.yml` and are not deployed automatically.
-- Updates to `main` are deployed to Production by `.github/workflows/publish.yml`.
-- Any branch can be deployed manually to Preview.
+- A push or merge to `main` makes the Vercel Git integration build and deploy Production. At the
+  same time `.github/workflows/publish.yml` runs the quality gate and E2E, then performs one
+  **staged Preview deployment of the same commit** that never claims the production domains.
+- Controlled production releases (hotfixes, shipping a specific version) happen when a
+  maintainer runs `Publish` with `target=production`, which passes the `production` Environment
+  approval.
 - Production incidents are handled manually through `.github/workflows/rollback.yml`.
+
+The two paths never write the production domains at the same time: the push-triggered
+deployment belongs to Vercel, and Actions only creates a staged Preview on push. Only a manually
+triggered Production release runs `vercel promote`.
 
 The application neither needs nor permits a Supabase `service_role` key. Browser and server code
 use only the public Supabase URL and Publishable Key; RLS and RPCs enforce data access.
@@ -63,10 +72,12 @@ because the full script already contains the incremental changes.
 1. Create a Vercel project and connect the GitHub repository.
 2. Keep Root Directory set to the repository root.
 3. Select **Next.js** as the Framework Preset.
-4. Select **20.x** as the Node.js Version.
+4. Select **22.x** as the Node.js Version. Vercel does not read `engines` from `package.json`,
+   so set it here; below 22.13 pnpm refuses to run.
 5. Do not set an Output Directory; use the Next.js default.
-6. The import does not need to deploy immediately. Configure environment variables and Supabase
-   callbacks first, then publish a Preview from GitHub Actions.
+6. Leave **Settings > Git > Deployments** at its default: pushes to `main` deploy to Production,
+   other branches and pull requests deploy to Preview.
+7. After connecting, confirm the CLI can reach the project with the script in section 6.
 
 The versioned `vercel.json` defines:
 
@@ -74,16 +85,14 @@ The versioned `vercel.json` defines:
 {
   "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm build",
-  "git": {
-    "deploymentEnabled": false
-  }
+  "buildCommand": "pnpm build"
 }
 ```
 
-Do not override these commands in the Vercel dashboard. `git.deploymentEnabled: false` disables
-only builds from the Vercel Git integration; it does not prevent GitHub Actions from deploying
-through Vercel CLI.
+Do not override these commands in the Vercel dashboard, and do not add
+`git.deploymentEnabled` back: the Vercel Git integration owns the automatic production
+deployment while Actions owns the gate, artifact retention, approval-gated releases, and
+rollback.
 
 ## 5. Configure environment variables
 
@@ -119,7 +128,14 @@ Add these entries under GitHub **Settings > Secrets and variables > Actions**:
 | `VERCEL_PROJECT_ID` | `projectId` in `.vercel/project.json` | Target Vercel project |
 
 You can run `pnpm dlx vercel@59.3.0 link` once locally to obtain the project IDs. Do not commit the
-generated `.vercel/` directory.
+generated `.vercel/` directory. With the three values in hand, rehearse the workflow's credential
+and environment checks locally; the repository script tells you exactly which item is missing
+within seconds:
+
+```bash
+VERCEL_TOKEN=... VERCEL_ORG_ID=... VERCEL_PROJECT_ID=... \
+  ./scripts/verify-vercel-connection.sh production
+```
 
 Create these environments under GitHub **Settings > Environments**:
 
@@ -129,7 +145,8 @@ Create these environments under GitHub **Settings > Environments**:
   equivalent external two-person approval before enabling rollback; otherwise the workflow has no
   independent approval gate.
 
-Secrets may be repository-level. If environments target different Vercel projects, store them in
+Secrets must live in **repository secrets**. Values stored only in an Environment are invisible to
+the `preflight` job of `Publish`. If environments target different Vercel projects, store them in
 the matching GitHub Environment instead. Supabase values still belong in Vercel and should not be
 duplicated as GitHub Secrets.
 
@@ -137,11 +154,12 @@ duplicated as GitHub Secrets.
 
 | Event | Workflow | Result |
 | --- | --- | --- |
-| Pull request into `main` | `CI` | Runs Biome, type checks, unit tests, build, and E2E |
+| Pull request into `main` | `CI` | Runs Biome, type checks, the docs and database checks, unit tests, build, and E2E; Vercel deploys Preview |
 | Manual `CI` run | `CI` | Validates the selected branch without deploying |
-| Push or merge into `main` | `Publish` | Deploys Production after all release gates pass |
+| Push or merge into `main` | Vercel Git integration | Builds and deploys Production automatically |
+| Push or merge into `main` | `Publish` | After the quality gate and E2E pass, performs one staged Preview deployment of the same commit without claiming the production domains |
 | Manual `Publish` with `preview` | `Publish` | Deploys the selected branch to Preview |
-| Manual `Publish` with `production` | `Publish` | Deploys only when the selected branch is `main` |
+| Manual `Publish` with `production` | `Publish` | Deploys and promotes Production only when the selected branch is `main`, after approval |
 | Manual `Rollback` from `main` | `Rollback` | Rolls back production after environment approval |
 
 Use short-lived feature branches and merge them into a protected `main` through pull requests.
@@ -168,7 +186,8 @@ steps:
 3. `e2e` runs Playwright in demo mode with explicitly empty Supabase variables. Playwright runs
    `pnpm build` first and serves it with `next start`, so this job also proves the production
    build runs.
-4. `deploy` validates Vercel credentials and the target; Production only accepts `main`.
+4. `deploy` validates Vercel credentials and the target. A push always targets `preview`; only a
+   manual run with `production` may publish to production, and only from `main`.
 5. `vercel pull` loads the target environment. Preview also passes the current branch name so
    branch-specific variables apply.
 6. Required Supabase environment variables are checked without exposing their values.
@@ -177,21 +196,21 @@ steps:
 9. The deploy command includes GitHub branch and commit metadata so the CLI Deployment is linked
    to the correct branch. Preview runs `vercel deploy --prebuilt` directly. Production uses
    `--prod --skip-domain` to create a staged Production Deployment.
-10. Production runs `vercel promote` to assign the production domains explicitly. This also clears
-    the domain auto-assignment pause left by an Instant Rollback.
+10. Only a production release runs `vercel promote` to assign the production domains explicitly.
+    This also clears the domain auto-assignment pause left by an Instant Rollback.
 11. The environment, version, and Deployment URL are written to the Job Summary.
-12. A separate least-privilege `release` job creates a
-    `v<major>.<minor>.<run-number>` GitHub Release with the downloaded build artifact.
+12. Only a production release creates the separate least-privilege `release` job, which publishes
+    a `v<major>.<minor>.<run-number>` GitHub Release with the downloaded build artifact.
 
-Deployments created by the workflow still appear in the Vercel dashboard, because
-`vercel deploy` creates a normal project Deployment. Only the automatic Git-triggered build is
-disabled by `vercel.json`.
+The push-triggered production release belongs to the Vercel Git integration; on a push Actions
+only creates a staged Preview, so the two paths never compete for the production domains. Both
+leave Deployment records in the Vercel dashboard and can be told apart by commit SHA.
 
-Preview and Production use separate concurrency groups. Regular Production runs do not interrupt
-the active deployment, but GitHub retains only the newest pending run in one concurrency group. A
-Production rollback cancels an active Production publish and runs with priority. Pause merges into
-`main` while handling an incident. The Vercel CLI version is pinned in the workflows; update and
-verify both publish and rollback workflows together.
+Pushes to `main`, Preview, and Production use separate concurrency groups. Regular runs do not
+interrupt the active run of the same kind, but GitHub retains only the newest pending run in one
+concurrency group. A production rollback cancels an active production publish and runs with
+priority. Pause merges into `main` while handling an incident. The Vercel CLI version is pinned in
+the workflows; update and verify both publish and rollback workflows together.
 
 ## 9. First deployment
 
@@ -218,9 +237,12 @@ verify both publish and rollback workflows together.
 4. Add the Preview URL's `/auth/callback` and the Production callback to Redirect URLs in their
    corresponding Supabase projects.
 5. Complete the Preview acceptance checks below.
-6. Merge the pull request into `main` and wait for the automatic Production deployment.
+6. Merge the pull request into `main`. The Vercel Git integration deploys Production, and
+   `Publish` performs a staged Preview deployment of the same commit for verification.
 7. After configuring DNS for the production domain, verify authentication callbacks and the
    public reservation page again.
+8. For a hotfix or a specific release, run `Publish` manually with `target=production`; after
+   approval it takes over the production domains with `vercel promote`.
 
 ## 10. Acceptance checks
 

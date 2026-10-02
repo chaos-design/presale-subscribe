@@ -117,9 +117,10 @@ pnpm build
 
 ## 部署
 
-生产发布由 GitHub Actions 统一执行：Pull Request 运行 CI，合并到 `main` 后自动部署
-Production，也可以手动发布 Preview。仓库会校验 Vercel 凭据和 Supabase 环境变量、
-保存预构建产物，并提供经过 Production 环境审批的人工回滚工作流。
+同一个提交有两条发布路径：`main` 变化时由 Vercel Git 集成自动部署 Production，GitHub Actions
+负责质量门禁、构建产物归档，并对同一提交做一次不接管生产域名的暂存 Preview 部署。维护者还可
+以手动触发 `Publish` 且 `target=production` 的方式执行经过审批的生产发布，或用 `Rollback`
+把生产流量切回上一个已验证的 Deployment。
 
 完整的环境变量、构建设置、分支策略、触发条件、故障处理和回滚步骤见
 [部署手册](./docs/deployment-guide.md)。项目不需要 `service_role` 密钥。

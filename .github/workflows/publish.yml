@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: publish-${{ github.event_name == 'push' && 'production' || inputs.target }}
+  group: publish-${{ inputs.target || 'main' }}
   cancel-in-progress: false
 
 env:
@@ -128,7 +128,7 @@ jobs:
     permissions:
       contents: read
     environment:
-      name: ${{ (github.event_name == 'push' || inputs.target == 'production') && 'production' || 'preview' }}
+      name: ${{ inputs.target == 'production' && 'production' || 'preview' }}
       url: ${{ steps.deploy.outputs.url }}
     outputs:
       archive: ${{ steps.release.outputs.archive }}
@@ -167,8 +167,12 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Vercel's Git integration owns production on a push to main. This workflow then
+          # verifies the same commit with a staged Preview deployment so the two paths never
+          # write the production domain at the same time. Production releases happen only when
+          # a maintainer dispatches this workflow explicitly.
           if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
-            target="production"
+            target="preview"
           else
             target="$REQUESTED_TARGET"
           fi

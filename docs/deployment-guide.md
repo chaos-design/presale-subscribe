@@ -2,8 +2,8 @@
 
 [English](./deployment-guide.en.md)
 
-本文说明 Ahead 在 Vercel 与 Supabase 上的生产部署流程。仓库以 GitHub Actions 为唯一
-发布入口，Vercel Git 自动部署已由 `vercel.json` 关闭，避免同一提交被重复构建和发布。
+本文说明 Ahead 在 Vercel 与 Supabase 上的生产部署流程。Vercel 的 Git 集成负责 `main`
+推送触发的自动生产部署；GitHub Actions 负责门禁、构建产物归档、受审批的生产发布与回滚。
 
 数据模型与安全边界见[架构说明](./architecture.md)，仓库权限与发布门禁见
 [贡献指南](../CONTRIBUTING.zh-CN.md)，漏洞报告渠道见[安全策略](../SECURITY.zh-CN.md)。
@@ -13,9 +13,15 @@
 - Vercel 运行 Next.js 16 应用、Server Actions 和 Route Handlers。
 - Supabase 提供 Auth、Postgres、Storage、RLS 和公开受限 RPC。
 - Pull Request 通过 `.github/workflows/ci.yml` 验证，不直接部署。
-- `main` 分支更新通过 `.github/workflows/publish.yml` 自动发布到 Production。
-- 任意分支可以从 GitHub Actions 手动发布到 Preview。
+- 推送或合并到 `main` 时，Vercel Git 集成自动发布 Production；同时
+  `.github/workflows/publish.yml` 运行质量门禁与 E2E，并对同一提交做一次**不接管生产域名**
+  的 Preview 部署，确认这个提交在 Vercel 上可运行。
+- 生产环境的受控发布（热修复、指定版本上线）由维护者手动触发 `Publish` 且
+  `target=production`，需通过 `production` Environment 审批。
 - 生产故障通过 `.github/workflows/rollback.yml` 人工回滚。
+
+两条路径不会同时写生产域名：推送触发的自动部署归 Vercel，Actions 在推送时只创建暂存
+Preview；只有手动触发的 Production 发布才会执行 `vercel promote`。
 
 应用不需要也不得配置 Supabase `service_role` 密钥。浏览器和服务端只使用公开的
 Supabase URL 与 Publishable Key，数据权限由 RLS 和 RPC 保证。
@@ -59,10 +65,12 @@ Supabase URL 与 Publishable Key，数据权限由 RLS 和 RPC 保证。
 1. 在 Vercel 新建项目并关联 GitHub 仓库。
 2. 将 Root Directory 保持为仓库根目录。
 3. Framework Preset 选择 **Next.js**。
-4. Node.js Version 选择 **20.x**。
+4. Node.js Version 选择 **22.x**（Vercel 不读取 `package.json` 的 `engines`，需在此单独设置；
+   低于 22.13 时 pnpm 会直接拒绝运行）。
 5. 不设置 Output Directory，使用 Next.js 默认输出。
-6. 首次导入可以先不触发部署；完成环境变量和 Supabase 回调配置后，再从 GitHub
-   Actions 发布 Preview。
+6. 在 **Settings > Git > Deployments** 保持默认行为：推送 `main` 自动部署到 Production，
+   其它分支与 Pull Request 自动部署到 Preview。
+7. 关联完成后，用本地脚本确认 CLI 也能访问该项目（见第 6 节）。
 
 仓库中的 `vercel.json` 固定以下设置：
 
@@ -70,15 +78,12 @@ Supabase URL 与 Publishable Key，数据权限由 RLS 和 RPC 保证。
 {
   "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm build",
-  "git": {
-    "deploymentEnabled": false
-  }
+  "buildCommand": "pnpm build"
 }
 ```
 
-不要在 Vercel 控制台覆盖这些命令。`git.deploymentEnabled: false` 只关闭 Vercel Git
-集成的自动构建，不影响 GitHub Actions 调用 Vercel CLI 发布。
+不要在 Vercel 控制台覆盖这些命令，也不要再加 `git.deploymentEnabled`：自动生产部署由
+Vercel Git 集成负责，Actions 负责门禁、产物归档、受审批发布与回滚。
 
 ## 5. 配置环境变量
 
@@ -112,7 +117,13 @@ HTTPS 格式和示例占位值。校验失败时不会构建或发布只读演�
 | `VERCEL_PROJECT_ID` | `.vercel/project.json` 的 `projectId` | 绑定目标项目 |
 
 可以先在本机执行一次 `pnpm dlx vercel@59.3.0 link` 获取项目标识，但不要提交生成的
-`.vercel/` 目录。
+`.vercel/` 目录。拿到三个值后，用仓库提供的脚本在本地复现工作流的凭据与环境变量校验，
+几秒内即可定位缺哪一项：
+
+```bash
+VERCEL_TOKEN=... VERCEL_ORG_ID=... VERCEL_PROJECT_ID=... \
+  ./scripts/verify-vercel-connection.sh production
+```
 
 在 GitHub **Settings > Environments** 中创建：
 
@@ -121,18 +132,20 @@ HTTPS 格式和示例占位值。校验失败时不会构建或发布只读演�
   **Prevent self-review**。若仓库套餐不支持这些规则，必须先建立等效的外部双人审批，
   否则回滚工作流没有独立审批门禁。
 
-Secrets 可以放在仓库级；若不同环境使用不同 Vercel 项目，则分别放入对应 GitHub
+Secrets 必须创建在 **repository secrets**；若只放在 Environment 里，`Publish` 的
+`preflight` 会读不到。若不同环境使用不同 Vercel 项目，则分别放入对应 GitHub
 Environment。Supabase 变量仍应配置在 Vercel，不要重复放入 GitHub Secrets。
 
 ## 7. 分支策略与触发条件
 
 | 事件 | 工作流 | 结果 |
 | --- | --- | --- |
-| 向 `main` 提交 Pull Request | `CI` | 执行 Biome、类型检查、单元测试、构建和 E2E |
+| 向 `main` 提交 Pull Request | `CI` | 执行 Biome、类型检查、文档校验、数据库校验、单元测试、构建和 E2E；Vercel 部署 Preview |
 | 手动执行 `CI` | `CI` | 验证当前选择的分支，不部署 |
-| Push 或合并到 `main` | `Publish` | 质量门禁通过后自动部署 Production |
+| Push 或合并到 `main` | Vercel Git 集成 | 自动构建并部署到 Production |
+| Push 或合并到 `main` | `Publish` | 质量门禁与 E2E 通过后，对同一提交做一次暂存 Preview 部署（不接管生产域名） |
 | 手动执行 `Publish`，选择 `preview` | `Publish` | 部署当前选择分支到 Preview |
-| 手动执行 `Publish`，选择 `production` | `Publish` | 仅当所选分支为 `main` 时部署 Production |
+| 手动执行 `Publish`，选择 `production` | `Publish` | 仅当所选分支为 `main` 时，经审批后部署并提升到 Production |
 | 从 `main` 手动执行 `Rollback` | `Rollback` | 经 Production 环境审批后回滚生产流量 |
 
 推荐使用短生命周期功能分支，经 Pull Request 合并到受保护的 `main`。可执行以下命令
@@ -149,13 +162,14 @@ GitHub 设置中手工配置等价规则。
 
 ## 8. 发布流程
 
-`Publish` 工作流按以下顺序执行，任一步失败都会阻止后续发布：
+`Publish` 工作流按以下顺序执行，任一步失败都会阻止后续步骤：
 
 1. `preflight` 先校验三个 Vercel Secret 是否存在，缺失时秒级失败。
 2. `quality` 执行 `pnpm check`。
 3. `e2e` 在显式清空 Supabase 变量的演示模式下运行 Playwright。Playwright 会先执行
    `pnpm build` 并用 `next start` 提供服务，因此该 Job 同时验证生产构建可运行。
-4. `deploy` 校验 Vercel 凭据和目标环境；Production 只接受 `main`。
+4. `deploy` 校验 Vercel 凭据和目标环境。推送触发时目标固定为 `preview`；手动触发且选择
+   `production` 时才允许发布生产，且仅接受 `main`。
 5. `vercel pull` 拉取目标环境设置；Preview 同时传入当前分支名，以应用分支级变量。
 6. 校验必需的 Supabase 环境变量，但不输出变量值。
 7. `vercel build` 生成 `.vercel/output`。
@@ -163,17 +177,18 @@ GitHub 设置中手工配置等价规则。
 9. 部署命令附加 GitHub 分支和提交元数据，使 CLI Deployment 正确关联分支。
    Preview 直接执行 `vercel deploy --prebuilt`；Production 使用 `--prod --skip-domain`
    创建暂存生产 Deployment。
-10. Production 通过 `vercel promote` 显式切换生产域名。这也会解除 Instant Rollback
+10. 仅生产发布执行 `vercel promote` 显式切换生产域名。这也会解除 Instant Rollback
     后的域名自动指派暂停状态。
 11. 在 Job Summary 中记录环境、版本和 Deployment URL。
-12. 独立的最小权限 `release` Job 创建
+12. 仅生产发布创建独立的最小权限 `release` Job，产出
     `v<major>.<minor>.<run-number>` GitHub Release，并附加下载的构建产物。
 
-工作流产出的 Deployment 仍会出现在 Vercel 控制台，因为 `vercel deploy` 创建的是正常项目
-Deployment；被 `vercel.json` 关闭的只是「Git 推送触发的自动构建」。
+推送触发的生产上线由 Vercel Git 集成完成；Actions 在推送时只创建暂存 Preview，因此不会
+与 Vercel 的自动部署争抢生产域名。两者都会在 Vercel 控制台留下 Deployment 记录，可用
+提交 SHA 区分来源。
 
-Preview 和 Production 使用独立并发组。常规生产发布不会中断正在运行的发布，但
-GitHub 同一并发组只保留最新的等待任务；生产回滚会主动取消正在运行的生产发布并优先
+`main` 推送、Preview 和 Production 使用独立并发组。常规发布不会中断正在运行的同类发布，
+但 GitHub 同一并发组只保留最新的等待任务；生产回滚会主动取消正在运行的生产发布并优先
 执行。处理事故期间应暂停向 `main` 合并新提交。Vercel CLI 版本固定在工作流中，升级
 时应同时更新发布、回滚工作流并重新验证。
 
@@ -196,14 +211,17 @@ GitHub 同一并发组只保留最新的等待任务；生产回滚会主动取�
 
 ### 发布步骤
 
-1. 从 GitHub Actions 打开 **Publish**。
-2. 选择已经通过 CI 的分支，将 `target` 设为 `preview`。
+1. 完成上表全部检查项，特别是 Supabase 环境变量与 Node 版本。
+2. 在 GitHub Actions 手动执行 **Publish**，`target` 选择 `preview`。
 3. 从 Job Summary 取得 Preview URL，先确认首页可访问。
 4. 将该 Preview URL 的 `/auth/callback` 和 Production 回调地址加入对应 Supabase
    项目的 Redirect URLs。
 5. 完成下节的 Preview 验收。
-6. 合并 Pull Request 到 `main`，等待 Production 自动发布。
+6. 合并 Pull Request 到 `main`；Vercel Git 集成自动发布 Production，`Publish` 对同一提交
+   做一次暂存 Preview 部署用于验证。
 7. 为生产域名配置 DNS 后，再次验证认证回调和公开预约页。
+8. 需要热修复或指定版本上线时，手动执行 **Publish** 且 `target=production`，经审批后
+   `vercel promote` 接管生产域名。
 
 ## 10. 发布验收
 

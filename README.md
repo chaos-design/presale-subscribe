@@ -118,10 +118,11 @@ pnpm build
 
 ## Deployment
 
-GitHub Actions owns production delivery: pull requests run CI, merges into `main` deploy to
-Production, and maintainers can deploy Preview manually. The workflow validates Vercel
-credentials and Supabase variables, retains the prebuilt output, and provides an
-approval-protected production rollback.
+Two paths ship the same commit. Vercel's Git integration deploys Production when `main` changes,
+and GitHub Actions runs the quality gate, retains the prebuilt output, and deploys a staged
+Preview of the same commit so nothing claims the production domains twice. A maintainer can also
+run `Publish` with `target=production` for an approval-gated production release, and `Rollback`
+returns production traffic to a previous verified Deployment.
 
 See the [deployment guide](./docs/deployment-guide.en.md) for environment variables, build
 settings, branch strategy, triggers, failure handling, and rollback. No service-role key is
