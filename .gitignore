@@ -49,3 +49,9 @@ yarn-error.log*
 *.tsbuildinfo
 .superpowers/
 docs/superpowers/
+
+# 通用运行时产物
+logs
+*.log
+*.pid
+.pnpm-store
