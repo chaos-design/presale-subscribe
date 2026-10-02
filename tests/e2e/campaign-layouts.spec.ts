@@ -623,13 +623,28 @@ test("orders, hides, and collapses page regions with local persistence", async (
   const featureTitleField = page.locator('[data-preview-source="feature-title"]')
   const featureTitleControl = featureTitleField.locator("textarea")
   await previewFeatureTitle.click()
-  // 预览点击后的编辑器高亮是瞬时状态，先断言高亮与其派生样式。
-  await expect(featureTitleControl).toHaveAttribute("data-editor-highlight", "true")
-  await expect(featureTitleField).toHaveCSS("outline-width", "0px")
-  await expect(featureTitleControl).toHaveCSS("outline-width", "0px")
-  expect(
-    await featureTitleControl.evaluate((control) => getComputedStyle(control).boxShadow)
-  ).toMatch(/2px inset/)
+  // 预览点击后的高亮是瞬时状态，属性与派生样式必须在同一轮采样里读取，否则会错过窗口。
+  await expect
+    .poll(
+      async () => {
+        const highlighted = await featureTitleControl.getAttribute("data-editor-highlight")
+        if (highlighted !== "true") {
+          return null
+        }
+        const [fieldOutline, controlOutline, boxShadow] = await Promise.all([
+          featureTitleField.evaluate((field) => getComputedStyle(field).outlineWidth),
+          featureTitleControl.evaluate((control) => getComputedStyle(control).outlineWidth),
+          featureTitleControl.evaluate((control) => getComputedStyle(control).boxShadow),
+        ])
+        return { boxShadow, controlOutline, fieldOutline }
+      },
+      { timeout: 5_000 }
+    )
+    .toEqual({
+      boxShadow: expect.stringMatching(/2px inset/),
+      controlOutline: "0px",
+      fieldOutline: "0px",
+    })
   await expect(
     page.locator('#campaign-highlights [data-slot="collapsible-trigger"]')
   ).toHaveAttribute("aria-expanded", "true")
