@@ -129,14 +129,16 @@ GitHub 图标的外部链接，并在新标签页打开；编辑器预览只显�
 ```bash
 pnpm lint
 pnpm typecheck
+pnpm docs:check
 pnpm test
 pnpm test:e2e
 pnpm build
 ```
 
-`pnpm check` 会依次运行 Biome、类型检查和 `tests/unit` 下的单元测试。Playwright 从
-`tests/e2e` 运行，并显式清空 Supabase 环境变量，以演示模式验证关键页面，不会连接
-本地或生产数据库。
+`pnpm check` 会依次运行 Biome、类型检查、文档链接校验和 `tests/unit` 下的单元测试。
+`pnpm docs:check` 校验全部 Markdown 相对链接与标题锚点。Playwright 从 `tests/e2e` 运行，
+先执行一次 `pnpm build` 再用 `next start` 提供服务，并显式清空 Supabase 环境变量，以演示
+模式验证关键页面，不会连接本地或生产数据库。
 
 ## 开发约定
 

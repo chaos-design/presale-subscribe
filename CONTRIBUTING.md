@@ -61,11 +61,16 @@ Run the same commands CI runs:
 ```bash
 pnpm lint        # Biome, no ESLint in this project
 pnpm typecheck   # tsc --noEmit, strict mode
+pnpm docs:check  # every relative Markdown link and heading anchor resolves
 pnpm test        # Vitest unit tests
 pnpm build       # production build
-pnpm check       # lint + typecheck + test
+pnpm check       # lint + typecheck + docs:check + test
 pnpm test:e2e    # Playwright, required for user-facing flow changes
 ```
+
+`pnpm docs:check` runs `scripts/check-doc-links.mjs`, which walks every Markdown file and
+fails when a relative link or heading anchor is stale. Run it after renaming a document or
+restructuring a heading.
 
 Conventions worth knowing before you write code:
 

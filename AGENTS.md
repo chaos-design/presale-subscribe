@@ -54,12 +54,14 @@ pnpm install --frozen-lockfile
 pnpm dev
 pnpm lint
 pnpm typecheck
+pnpm docs:check
 pnpm test
 pnpm test:e2e
 pnpm build
 ```
 
 提交结果前至少运行 `pnpm check` 和 `pnpm build`。涉及关键用户流程或响应式布局时，补充或运行 Playwright 测试。
+修改文件名、标题或文档结构后运行 `pnpm docs:check`，它会校验全部 Markdown 链接与锚点。
 
 ## 文档
 

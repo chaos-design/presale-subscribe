@@ -142,14 +142,17 @@ and `pnpm build`, then verify that the footer does not overflow on desktop or mo
 ```bash
 pnpm lint
 pnpm typecheck
+pnpm docs:check
 pnpm test
 pnpm test:e2e
 pnpm build
 ```
 
-`pnpm check` runs Biome, TypeScript, and unit tests from `tests/unit`. Playwright runs from
-`tests/e2e`, explicitly clears Supabase variables, and tests demo mode, so it never connects to
-local or production data.
+`pnpm check` runs Biome, TypeScript, the documentation link check, and unit tests from
+`tests/unit`. `pnpm docs:check` validates every relative Markdown link and heading anchor.
+Playwright runs from `tests/e2e`, builds the app and serves it with `next start`, explicitly
+clears Supabase variables, and tests demo mode, so it never connects to local or production
+data.
 
 ## Conventions
 

@@ -56,11 +56,15 @@ GH_TOKEN=<具有 administration write 权限的令牌> \
 ```bash
 pnpm lint        # Biome；本项目不使用 ESLint
 pnpm typecheck   # tsc --noEmit，严格模式
+pnpm docs:check  # 校验全部 Markdown 相对链接与标题锚点
 pnpm test        # Vitest 单元测试
 pnpm build       # 生产构建
-pnpm check       # lint + typecheck + test
+pnpm check       # lint + typecheck + docs:check + test
 pnpm test:e2e    # Playwright，界面主流程改动必跑
 ```
+
+`pnpm docs:check` 执行 `scripts/check-doc-links.mjs`，遍历所有 Markdown 文件，只要相对链接
+或标题锚点失效就失败。重命名文档或调整标题结构后必须运行。
 
 写代码前需要知道的项目约定：
 
