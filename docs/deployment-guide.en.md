@@ -162,24 +162,30 @@ rule in GitHub settings.
 The `Publish` workflow executes these steps. A failure at any step blocks all later deployment
 steps:
 
-1. `quality` runs `pnpm check`.
-2. `e2e` runs Playwright in demo mode with explicitly empty Supabase variables. Playwright runs
+1. `preflight` checks that the three Vercel secrets exist and fails within seconds when one is
+   missing, without blocking the quality and e2e jobs.
+2. `quality` runs `pnpm check`.
+3. `e2e` runs Playwright in demo mode with explicitly empty Supabase variables. Playwright runs
    `pnpm build` first and serves it with `next start`, so this job also proves the production
    build runs.
-3. `deploy` validates Vercel credentials and the target; Production only accepts `main`.
-4. `vercel pull` loads the target environment. Preview also passes the current branch name so
+4. `deploy` validates Vercel credentials and the target; Production only accepts `main`.
+5. `vercel pull` loads the target environment. Preview also passes the current branch name so
    branch-specific variables apply.
-5. Required Supabase environment variables are checked without exposing their values.
-6. `vercel build` creates `.vercel/output`.
-7. The output is packaged as a GitHub Actions Artifact retained for 30 days.
-8. The deploy command includes GitHub branch and commit metadata so the CLI Deployment is linked
+6. Required Supabase environment variables are checked without exposing their values.
+7. `vercel build` creates `.vercel/output`.
+8. The output is packaged as a GitHub Actions Artifact retained for 30 days.
+9. The deploy command includes GitHub branch and commit metadata so the CLI Deployment is linked
    to the correct branch. Preview runs `vercel deploy --prebuilt` directly. Production uses
    `--prod --skip-domain` to create a staged Production Deployment.
-9. Production runs `vercel promote` to assign the production domains explicitly. This also clears
-   the domain auto-assignment pause left by an Instant Rollback.
-10. The environment, version, and Deployment URL are written to the Job Summary.
-11. A separate least-privilege `release` job creates a
+10. Production runs `vercel promote` to assign the production domains explicitly. This also clears
+    the domain auto-assignment pause left by an Instant Rollback.
+11. The environment, version, and Deployment URL are written to the Job Summary.
+12. A separate least-privilege `release` job creates a
     `v<major>.<minor>.<run-number>` GitHub Release with the downloaded build artifact.
+
+Deployments created by the workflow still appear in the Vercel dashboard, because
+`vercel deploy` creates a normal project Deployment. Only the automatic Git-triggered build is
+disabled by `vercel.json`.
 
 Preview and Production use separate concurrency groups. Regular Production runs do not interrupt
 the active deployment, but GitHub retains only the newest pending run in one concurrency group. A

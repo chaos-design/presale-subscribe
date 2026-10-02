@@ -151,22 +151,26 @@ GitHub 设置中手工配置等价规则。
 
 `Publish` 工作流按以下顺序执行，任一步失败都会阻止后续发布：
 
-1. `quality` 执行 `pnpm check`。
-2. `e2e` 在显式清空 Supabase 变量的演示模式下运行 Playwright。Playwright 会先执行
+1. `preflight` 先校验三个 Vercel Secret 是否存在，缺失时秒级失败。
+2. `quality` 执行 `pnpm check`。
+3. `e2e` 在显式清空 Supabase 变量的演示模式下运行 Playwright。Playwright 会先执行
    `pnpm build` 并用 `next start` 提供服务，因此该 Job 同时验证生产构建可运行。
-3. `deploy` 校验 Vercel 凭据和目标环境；Production 只接受 `main`。
-4. `vercel pull` 拉取目标环境设置；Preview 同时传入当前分支名，以应用分支级变量。
-5. 校验必需的 Supabase 环境变量，但不输出变量值。
-6. `vercel build` 生成 `.vercel/output`。
-7. 将构建输出打包为保留 30 天的 GitHub Actions Artifact。
-8. 部署命令附加 GitHub 分支和提交元数据，使 CLI Deployment 正确关联分支。
+4. `deploy` 校验 Vercel 凭据和目标环境；Production 只接受 `main`。
+5. `vercel pull` 拉取目标环境设置；Preview 同时传入当前分支名，以应用分支级变量。
+6. 校验必需的 Supabase 环境变量，但不输出变量值。
+7. `vercel build` 生成 `.vercel/output`。
+8. 将构建输出打包为保留 30 天的 GitHub Actions Artifact。
+9. 部署命令附加 GitHub 分支和提交元数据，使 CLI Deployment 正确关联分支。
    Preview 直接执行 `vercel deploy --prebuilt`；Production 使用 `--prod --skip-domain`
    创建暂存生产 Deployment。
-9. Production 通过 `vercel promote` 显式切换生产域名。这也会解除 Instant Rollback
-   后的域名自动指派暂停状态。
-10. 在 Job Summary 中记录环境、版本和 Deployment URL。
-11. 独立的最小权限 `release` Job 创建
+10. Production 通过 `vercel promote` 显式切换生产域名。这也会解除 Instant Rollback
+    后的域名自动指派暂停状态。
+11. 在 Job Summary 中记录环境、版本和 Deployment URL。
+12. 独立的最小权限 `release` Job 创建
     `v<major>.<minor>.<run-number>` GitHub Release，并附加下载的构建产物。
+
+工作流产出的 Deployment 仍会出现在 Vercel 控制台，因为 `vercel deploy` 创建的是正常项目
+Deployment；被 `vercel.json` 关闭的只是「Git 推送触发的自动构建」。
 
 Preview 和 Production 使用独立并发组。常规生产发布不会中断正在运行的发布，但
 GitHub 同一并发组只保留最新的等待任务；生产回滚会主动取消正在运行的生产发布并优先

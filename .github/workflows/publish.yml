@@ -28,6 +28,26 @@ env:
   VERCEL_CLI_VERSION: "59.3.0"
 
 jobs:
+  preflight:
+    name: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate Vercel credentials
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing repository secret ${name}. Add it under Settings > Secrets and variables > Actions."
+              exit 1
+            fi
+          done
+          echo "Vercel credentials are present."
+
   quality:
     name: quality
     runs-on: ubuntu-latest
@@ -100,6 +120,7 @@ jobs:
   deploy:
     name: deploy
     needs:
+      - preflight
       - quality
       - e2e
     runs-on: ubuntu-latest
