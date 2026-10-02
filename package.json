@@ -18,6 +18,7 @@
     "typecheck": "tsc --noEmit",
     "docs:check": "node scripts/check-doc-links.mjs",
     "test": "vitest run",
+    "test:db": "vitest run tests/integration",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "check": "pnpm lint && pnpm typecheck && pnpm docs:check && pnpm test"
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.8",
+    "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.55.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",

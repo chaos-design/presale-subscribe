@@ -58,6 +58,19 @@ supabase db reset
 差异。修改任一脚本后，除了在本地 Supabase 上执行，还应确认：全量脚本连续执行两次不报错，
 增量脚本在已同步的数据库上执行后函数签名、授权、策略与索引保持不变。
 
+## 数据库自动化校验
+
+`pnpm test:db` 在进程内运行 PGlite（WebAssembly 版 PostgreSQL），只桩掉 Supabase 提供的
+`auth`、`storage` 架构与 `anon`、`authenticated` 角色，其余全部执行真实 SQL。它校验：
+
+- `platform.sql` 可连续执行两次，`update.sql` 在已同步数据库上不产生任何差异。
+- 四张业务表启用 RLS，`anon` 无任何直接授权，所有者只拿到工作台所需的权限。
+- 每个 RPC 的 `security definer`/`invoker`、执行角色与固定 `search_path`。
+- 媒体桶配置与四条 Storage 策略，且不存在匿名列举策略。
+- 预约幂等、问卷校验、关闭预约区后的写入拦截、访问散列与所有者隔离。
+
+因此 SQL 变更无需 Docker 或本地 Supabase 项目即可验证，回归会在 CI 暴露。
+
 ## 工程结构
 
 | 路径 | 说明 |
@@ -68,7 +81,8 @@ supabase db reset
 | `src/types/database.ts` | 数据库与业务类型 |
 | `supabase/platform.sql` | 可整份重复执行的数据库与 Storage 初始化脚本 |
 | `supabase/update.sql` | 当前尚待执行的预约入口保护与媒体 Storage 策略增量更新 |
-| `tests/unit/` | Vitest 单元测试 |
+| `tests/unit/` | Vitest 单元测试与 SQL 文本断言 |
+| `tests/integration/` | PGlite 数据库脚本、授权与行为集成测试 |
 | `tests/e2e/` | Playwright 主流程测试 |
 
 ## 产品与源码链接配置
@@ -139,7 +153,7 @@ pnpm test:e2e
 pnpm build
 ```
 
-`pnpm check` 会依次运行 Biome、类型检查、文档链接校验和 `tests/unit` 下的单元测试。
+`pnpm check` 会依次运行 Biome、类型检查、文档链接校验和 `tests/unit` 与 `tests/integration` 下的测试。
 `pnpm docs:check` 校验全部 Markdown 相对链接与标题锚点。Playwright 从 `tests/e2e` 运行，
 先执行一次 `pnpm build` 再用 `next start` 提供服务，并显式清空 Supabase 环境变量，以演示
 模式验证关键页面，不会连接本地或生产数据库。

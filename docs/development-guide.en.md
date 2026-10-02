@@ -64,6 +64,25 @@ already matches the current `platform.sql`. After editing either script, verify 
 full script applies twice without errors and that the incremental script leaves function
 signatures, grants, policies, and indexes unchanged on a synchronized database.
 
+## Automated database verification
+
+`pnpm test:db` runs PGlite, a WebAssembly build of PostgreSQL, inside the test process. Only the
+Supabase-managed `auth` and `storage` schemas plus the `anon` and `authenticated` roles are
+stubbed; everything else runs real SQL. It verifies that:
+
+- `platform.sql` applies twice and `update.sql` changes nothing on a synchronized database.
+- All four business tables enable RLS, `anon` holds no direct grant, and owners receive exactly
+  the privileges the dashboard needs.
+- Every RPC matches its expected `security definer`/`invoker` mode, execution roles, and pinned
+  `search_path`.
+- The media bucket configuration and four Storage policies exist, with no anonymous listing
+  policy.
+- Reservations stay idempotent, questionnaire answers are validated, closed campaigns reject
+  writes, page-view identifiers are hashed, and owners stay isolated from each other.
+
+SQL changes therefore need neither Docker nor a local Supabase project, and regressions surface
+in CI.
+
 ## Structure
 
 | Path | Responsibility |
@@ -74,7 +93,8 @@ signatures, grants, policies, and indexes unchanged on a synchronized database.
 | `src/types/database.ts` | Database and product types |
 | `supabase/platform.sql` | Repeatable all-in-one database and Storage initialization |
 | `supabase/update.sql` | Current pending subscription-entry and media Storage policy upgrade |
-| `tests/unit/` | Vitest unit coverage |
+| `tests/unit/` | Vitest unit coverage and SQL text assertions |
+| `tests/integration/` | PGlite database script, grant, and behaviour tests |
 | `tests/e2e/` | Playwright user-flow coverage |
 
 ## Product and source-link configuration
@@ -153,8 +173,8 @@ pnpm test:e2e
 pnpm build
 ```
 
-`pnpm check` runs Biome, TypeScript, the documentation link check, and unit tests from
-`tests/unit`. `pnpm docs:check` validates every relative Markdown link and heading anchor.
+`pnpm check` runs Biome, TypeScript, the documentation link check, and the tests under
+`tests/unit` and `tests/integration`. `pnpm docs:check` validates every relative Markdown link and heading anchor.
 Playwright runs from `tests/e2e`, builds the app and serves it with `next start`, explicitly
 clears Supabase variables, and tests demo mode, so it never connects to local or production
 data.

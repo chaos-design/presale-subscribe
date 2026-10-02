@@ -48,7 +48,7 @@ Supabase Postgres（唯一权威数据层）
 | `src/types/database.ts` | 数据库行类型与配置快照类型 |
 | `supabase/platform.sql` | 唯一权威全量 SQL，可整份重复执行 |
 | `supabase/update.sql` | 当前尚待执行的增量 SQL，内容必须已合并进全量 SQL |
-| `tests/unit/`、`tests/e2e/` | Vitest 单元测试与 Playwright 主流程测试 |
+| `tests/unit/`、`tests/integration/`、`tests/e2e/` | Vitest 单元测试、PGlite 数据库集成测试与 Playwright 主流程测试 |
 
 ## 3. 数据模型
 

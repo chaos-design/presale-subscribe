@@ -50,6 +50,9 @@ jobs:
       - name: Check documentation links
         run: pnpm docs:check
 
+      - name: Verify database scripts and grants
+        run: pnpm test:db
+
       - name: Run unit and integration tests
         run: pnpm test
 

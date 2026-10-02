@@ -55,6 +55,7 @@ pnpm dev
 pnpm lint
 pnpm typecheck
 pnpm docs:check
+pnpm test:db
 pnpm test
 pnpm test:e2e
 pnpm build

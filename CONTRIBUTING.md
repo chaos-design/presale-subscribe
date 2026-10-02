@@ -62,7 +62,8 @@ Run the same commands CI runs:
 pnpm lint        # Biome, no ESLint in this project
 pnpm typecheck   # tsc --noEmit, strict mode
 pnpm docs:check  # every relative Markdown link and heading anchor resolves
-pnpm test        # Vitest unit tests
+pnpm test:db     # Supabase scripts against an in-process real PostgreSQL
+pnpm test        # Vitest unit and integration tests
 pnpm build       # production build
 pnpm check       # lint + typecheck + docs:check + test
 pnpm test:e2e    # Playwright, required for user-facing flow changes
@@ -71,6 +72,13 @@ pnpm test:e2e    # Playwright, required for user-facing flow changes
 `pnpm docs:check` runs `scripts/check-doc-links.mjs`, which walks every Markdown file and
 fails when a relative link or heading anchor is stale. Run it after renaming a document or
 restructuring a heading.
+
+`pnpm test:db` runs `tests/integration/database-schema.test.ts` against PGlite, a WebAssembly
+build of PostgreSQL. It applies `supabase/platform.sql` twice, then `supabase/update.sql`,
+and asserts that the resulting schema, grants, and policies are unchanged by the incremental
+script. It also exercises reservations, questionnaire validation, page-view hashing, and owner
+isolation as the `anon` and `authenticated` roles. No Docker or Supabase project is required, so
+SQL regressions fail in CI instead of during a release.
 
 Conventions worth knowing before you write code:
 
@@ -121,6 +129,8 @@ Rules that public SQL must keep:
   `subscription_campaigns`, `subscribers`, or `campaign_page_views`.
 - Reservations are idempotent per `(campaign_id, email)`, and questionnaire answers are
   validated against the published questions in both the Server Action and the RPC.
+- Run `pnpm test:db` after every SQL change; it is the only automated proof that grants,
+  policies, and behaviour still hold.
 
 The [architecture guide](./docs/architecture.en.md#4-rpc-contract) documents the current
 contract; keep it in sync.

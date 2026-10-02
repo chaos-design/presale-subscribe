@@ -57,7 +57,8 @@ GH_TOKEN=<具有 administration write 权限的令牌> \
 pnpm lint        # Biome；本项目不使用 ESLint
 pnpm typecheck   # tsc --noEmit，严格模式
 pnpm docs:check  # 校验全部 Markdown 相对链接与标题锚点
-pnpm test        # Vitest 单元测试
+pnpm test:db     # 用进程内真实 PostgreSQL 校验 Supabase 脚本
+pnpm test        # Vitest 单元与集成测试
 pnpm build       # 生产构建
 pnpm check       # lint + typecheck + docs:check + test
 pnpm test:e2e    # Playwright，界面主流程改动必跑
@@ -65,6 +66,12 @@ pnpm test:e2e    # Playwright，界面主流程改动必跑
 
 `pnpm docs:check` 执行 `scripts/check-doc-links.mjs`，遍历所有 Markdown 文件，只要相对链接
 或标题锚点失效就失败。重命名文档或调整标题结构后必须运行。
+
+`pnpm test:db` 执行 `tests/integration/database-schema.test.ts`，使用 PGlite（WebAssembly 版
+PostgreSQL）：先连续执行两次 `supabase/platform.sql`，再执行 `supabase/update.sql`，断言增量
+脚本不会改变既有 Schema、授权与策略；同时以 `anon` 和 `authenticated` 角色验证预约幂等、
+问卷校验、访问散列与所有者隔离。它不需要 Docker 或 Supabase 项目，因此 SQL 回归会在 CI
+阶段暴露，而不是等到发布时才失败。
 
 写代码前需要知道的项目约定：
 
@@ -107,6 +114,7 @@ E2E 跑在真实生产构建上，编译耗时不再是变量；但 GSAP 入场�
   `campaign_page_views` 的 `SELECT` 或 `INSERT` 权限。
 - 预约在 `(campaign_id, email)` 上保持幂等；问卷答案必须在 Server Action 与 RPC 中都按
   已发布题目校验。
+- 每次改动 SQL 后运行 `pnpm test:db`，它是授权、策略与行为仍然成立的唯一自动化证明。
 
 当前契约记录在[架构说明](./docs/architecture.md#4-rpc-契约)中，变更后请同步更新。
 

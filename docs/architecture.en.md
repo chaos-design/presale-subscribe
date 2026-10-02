@@ -53,7 +53,7 @@ Three invariants must keep holding:
 | `src/types/database.ts` | Database row types and config snapshot types |
 | `supabase/platform.sql` | Authoritative full SQL, safe to re-run as a whole |
 | `supabase/update.sql` | Pending incremental SQL; its content must already be merged into the full script |
-| `tests/unit/`, `tests/e2e/` | Vitest unit tests and Playwright flow tests |
+| `tests/unit/`, `tests/integration/`, `tests/e2e/` | Vitest unit tests, PGlite database integration tests, and Playwright flow tests |
 
 ## 3. Data model
 
