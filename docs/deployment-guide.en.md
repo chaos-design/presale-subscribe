@@ -355,6 +355,12 @@ Both come from `.vercel/project.json`; never commit that directory.
 5. Immediately complete the Production acceptance checks in section 10, focusing on public
    reservations and analytics.
 
+Both scripts are safe to re-run. `update.sql` produces no differences on a project that already
+matches the current `platform.sql`, so upgrading an old project and initializing a new one can
+follow the same verification steps. The analytics RPCs in the incremental script use the same
+self-contained implementation as the full script and never depend on functions that only
+existed in earlier versions.
+
 Database changes are forward fixes only. A Vercel rollback does not revert the schema; undo work
 must ship as new SQL and be validated on Preview first.
 

@@ -59,6 +59,11 @@ the current pending production upgrade, is excluded from `db reset`, and must al
 merged back into the complete SQL. After an upgrade is applied, replace this file with the next
 database change instead of retaining executed incremental scripts.
 
+Both scripts are safe to re-run, and `update.sql` produces no differences on a database that
+already matches the current `platform.sql`. After editing either script, verify locally that the
+full script applies twice without errors and that the incremental script leaves function
+signatures, grants, policies, and indexes unchanged on a synchronized database.
+
 ## Structure
 
 | Path | Responsibility |

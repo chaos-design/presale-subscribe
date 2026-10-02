@@ -324,6 +324,11 @@ Instant Rollback 仍会使用旧值。因此轮换 Supabase 公开密钥等同�
    bucket 存在；`anon` 角色对业务表仍无 `SELECT`/`INSERT` 授权。
 5. 立即完成第 10 节 Production 验收，重点验证公开预约与数据分析。
 
+`platform.sql` 和 `update.sql` 都可重复执行。`update.sql` 在已经执行过当前
+`platform.sql` 的项目上重复运行不会产生任何差异，因此旧项目升级与新项目初始化可以使用
+同一套验证步骤。增量脚本中的分析 RPC 与全量脚本保持一致实现，不依赖任何只在旧版本中存在
+的函数。
+
 数据库变更只做前向修复。Vercel 回滚不会回退 Schema，任何回退都应通过新的 SQL 变更
 完成，并先在 Preview 验证。
 
