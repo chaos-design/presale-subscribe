@@ -27,7 +27,7 @@ use only the public Supabase URL and Publishable Key; RLS and RPCs enforce data 
 - A GitHub repository with permission to run Actions.
 - A Vercel project and a token allowed to create Deployments.
 - A Supabase project; separate Preview and Production projects are recommended.
-- Node.js 20.9 or later (declared through the `engines` field in `package.json`) and pnpm
+- Node.js 22.13 or later (declared through `engines`; the floor comes from pnpm 11.21) and pnpm
   11.21.0.
 - GitHub CLI, only when applying the repository's branch protection script.
 - Repository setting: enable **Settings > Code security > Private vulnerability reporting** so the
@@ -193,7 +193,7 @@ verify both publish and rollback workflows together.
 
 | Item | Action | Pass criteria |
 | --- | --- | --- |
-| Node version | Vercel Project Settings > Node.js Version | Satisfies the `engines` range `>=20.9.0` and is not older than the 20.x used in CI |
+| Node version | Vercel Project Settings > Node.js Version | Satisfies the `engines` range `>=22.13.0`, ideally the same 22.x used by CI |
 | Build commands | Do not override `installCommand` or `buildCommand` from `vercel.json` | No custom override in the dashboard |
 | Production database | Run `supabase/platform.sql` as a whole in the SQL Editor | RLS enabled on all four tables and the `campaign-media` bucket exists |
 | Auth callbacks | Supabase URL Configuration | Production and Preview `/auth/callback` entries are in Redirect URLs |

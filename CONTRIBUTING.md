@@ -12,7 +12,8 @@ By contributing you agree that your work is licensed under
 
 ## 1. Prerequisites
 
-- Node.js 20.9 or newer (`package.json` enforces this through `engines`).
+- Node.js 22.13 or newer. `package.json` enforces this through `engines`; the floor comes from
+  the pinned pnpm 11.21 release, not from Next.js.
 - pnpm 11.21.0. Use the version pinned in `packageManager`; do not commit `package-lock.json`
   or `yarn.lock`.
 - Optional: a Supabase project for real data. Without it the app runs in read-only demo

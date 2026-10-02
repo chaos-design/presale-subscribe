@@ -10,7 +10,8 @@ Ahead 是一个基于 Next.js 16、React 19、Supabase、Tailwind CSS 4 与 Biom
 
 ## 1. 环境准备
 
-- Node.js 20.9 或更高版本（`package.json` 通过 `engines` 声明）。
+- Node.js 22.13 或更高版本。`package.json` 通过 `engines` 声明；该下限来自锁定的
+  pnpm 11.21，而不是 Next.js。
 - pnpm 11.21.0，使用 `packageManager` 中锁定的版本；不要提交 `package-lock.json` 或
   `yarn.lock`。
 - 可选：一个 Supabase 项目用于真实数据。没有它时应用运行在只读演示模式，足以完成界面

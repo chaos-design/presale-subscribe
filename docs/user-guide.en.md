@@ -37,7 +37,7 @@ links or verification codes.
 
 ### Install locally
 
-Self-hosting or local evaluation requires Node.js 20.9 or later, pnpm 11.21.0, and a Supabase
+Self-hosting or local evaluation requires Node.js 22.13 or later, pnpm 11.21.0, and a Supabase
 project.
 
 ```bash

@@ -33,8 +33,8 @@ Ahead is a full-stack feature announcement and reservation system. Teams can cre
 
 ## Local Setup
 
-Requirements: Node.js 20.9 or newer (enforced through `package.json` `engines`) and pnpm
-11.21.0. A Supabase project is optional; without it the app runs in read-only demo mode.
+Requirements: Node.js 22.13 or newer (the floor imposed by the pinned pnpm 11.21, also
+declared in `package.json` `engines`) and pnpm 11.21.0. A Supabase project is optional; without it the app runs in read-only demo mode.
 
 ```bash
 pnpm install --frozen-lockfile

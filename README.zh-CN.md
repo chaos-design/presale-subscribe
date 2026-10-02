@@ -33,8 +33,8 @@ Ahead 是一个完整的功能预告与预约订阅系统。团队可以创建�
 
 ## 本地运行
 
-环境要求：Node.js 20.9 或更高版本（由 `package.json` 的 `engines` 约束）与
-pnpm 11.21.0。Supabase 项目是可选的；没有配置时应用运行在只读演示模式。
+环境要求：Node.js 22.13 或更高版本（该下限由锁定的 pnpm 11.21 决定，同时写入
+`package.json` 的 `engines`）与 pnpm 11.21.0。Supabase 项目是可选的；没有配置时应用运行在只读演示模式。
 
 ```bash
 pnpm install --frozen-lockfile

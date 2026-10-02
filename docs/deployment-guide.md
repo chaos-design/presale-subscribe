@@ -25,7 +25,7 @@ Supabase URL 与 Publishable Key，数据权限由 RLS 和 RPC 保证。
 - GitHub 仓库及 Actions 执行权限。
 - Vercel 项目及可创建 Deployment 的访问令牌。
 - Supabase 项目；建议 Preview 和 Production 使用不同项目。
-- Node.js 20.9 或更高版本（由 `package.json` 的 `engines` 声明）、pnpm 11.21.0。
+- Node.js 22.13 或更高版本（由 `package.json` 的 `engines` 声明，该下限来自 pnpm 11.21）、pnpm 11.21.0。
 - GitHub CLI，仅在执行分支保护脚本时需要。
 - 仓库设置：**Settings > Code security > Private vulnerability reporting** 建议开启，
   以便[安全策略](../SECURITY.zh-CN.md)中的私密报告渠道可用。
@@ -179,7 +179,7 @@ GitHub 同一并发组只保留最新的等待任务；生产回滚会主动取�
 
 | 检查项 | 操作 | 通过标准 |
 | --- | --- | --- |
-| Node 版本 | Vercel Project Settings > Node.js Version | 满足 `engines` 的 `>=20.9.0`，不要低于 CI 使用的 20.x |
+| Node 版本 | Vercel Project Settings > Node.js Version | 满足 `engines` 的 `>=22.13.0`，建议与 CI 一致使用 22.x |
 | 构建命令 | 不覆盖 `vercel.json` 中的 `installCommand` 与 `buildCommand` | Dashboard 中无自定义覆盖 |
 | Supabase 生产库 | SQL Editor 整份执行 `supabase/platform.sql` | 四张业务表启用 RLS，`campaign-media` bucket 存在 |
 | 认证回调 | Supabase URL Configuration | 生产与 Preview 的 `/auth/callback` 都在 Redirect URLs 中 |

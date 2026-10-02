@@ -7,7 +7,7 @@
 
 ## 本地环境
 
-- Node.js 20.9 或更高版本（`package.json` 的 `engines` 会在安装时校验）
+- Node.js 22.13 或更高版本（`package.json` 的 `engines` 会在安装时校验；该下限来自 pnpm 11.21）
 - pnpm 11.21.0（`packageManager` 锁定版本）
 - 可选的 Supabase 开发项目
 

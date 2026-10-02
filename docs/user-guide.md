@@ -35,7 +35,7 @@ Ahead 地址，并准备一个可以接收确认链接或验证码的邮箱。
 
 ### 本地安装
 
-自托管或本地体验需要 Node.js 20.9 或更高版本、pnpm 11.21.0 和一个 Supabase 项目。
+自托管或本地体验需要 Node.js 22.13 或更高版本、pnpm 11.21.0 和一个 Supabase 项目。
 
 ```bash
 pnpm install --frozen-lockfile

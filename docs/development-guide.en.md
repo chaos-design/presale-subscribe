@@ -8,7 +8,7 @@ For the data model, RPC contract, and request flows see the
 
 ## Local environment
 
-- Node.js 20.9 or newer (validated by the `engines` field in `package.json`)
+- Node.js 22.13 or newer (validated by `engines`; the floor comes from pnpm 11.21)
 - pnpm 11.21.0 (pinned by `packageManager`)
 - An optional Supabase development project
 
