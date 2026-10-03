@@ -737,8 +737,17 @@
   font-size: 0.7rem;
 }
 
-.home-command-preview:hover {
-  background: rgb(255 255 255 / 8%);
+/* The hero is always dark, so this link owns its colors. Without them the ghost
+   variant's hover:text-foreground resolves to the light theme near-black token and
+   the label disappears on hover. */
+.home-command-preview {
+  color: rgb(255 255 255 / 86%);
+}
+
+.home-command-preview:hover,
+.home-command-preview:focus-visible {
+  background: rgb(255 255 255 / 10%);
+  color: #ffffff;
 }
 
 .home-command-primary {

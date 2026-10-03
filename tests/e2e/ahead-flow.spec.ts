@@ -1,6 +1,12 @@
-import { expect, test } from "@playwright/test"
+import { expect, type Locator, test } from "@playwright/test"
 
 import { productConfig } from "@/lib/product-config"
+
+async function readColorBrightness(locator: Locator) {
+  const value = await locator.evaluate((element) => getComputedStyle(element).color)
+  const channels = value.match(/\d+(\.\d+)?/g)?.map(Number) ?? [0, 0, 0]
+  return (channels[0] + channels[1] + channels[2]) / 3
+}
 
 test("opens the campaign workspace and editor in demo mode", async ({ page }) => {
   const pageErrors: string[] = []
@@ -16,6 +22,20 @@ test("opens the campaign workspace and editor in demo mode", async ({ page }) =>
     "href",
     productConfig.productCredit.githubUrl
   )
+
+  // 首页 Hero 恒为深色，顶部链接在默认与悬停状态下都必须保持可读。
+  const previewLink = page.getByRole("link", { name: "查看线上示例" })
+  const restingBrightness = await readColorBrightness(previewLink)
+  await previewLink.hover()
+  const hoverBrightness = await readColorBrightness(previewLink)
+  const hoverBackground = await previewLink.evaluate(
+    (element) => getComputedStyle(element).backgroundColor
+  )
+
+  expect(restingBrightness).toBeGreaterThan(200)
+  expect(hoverBrightness).toBeGreaterThan(200)
+  expect(hoverBackground).not.toBe("rgba(0, 0, 0, 0)")
+
   await page
     .getByRole("link", { name: /查看演示工作台|进入工作台|登录/ })
     .first()
