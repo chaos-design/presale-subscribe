@@ -25,16 +25,20 @@ test("opens the campaign workspace and editor in demo mode", async ({ page }) =>
 
   // 首页 Hero 恒为深色，顶部链接在默认与悬停状态下都必须保持可读。
   const previewLink = page.getByRole("link", { name: "查看线上示例" })
-  const restingBrightness = await readColorBrightness(previewLink)
-  await previewLink.hover()
-  const hoverBrightness = await readColorBrightness(previewLink)
-  const hoverBackground = await previewLink.evaluate(
-    (element) => getComputedStyle(element).backgroundColor
-  )
+  expect(await readColorBrightness(previewLink)).toBeGreaterThan(200)
 
-  expect(restingBrightness).toBeGreaterThan(200)
-  expect(hoverBrightness).toBeGreaterThan(200)
-  expect(hoverBackground).not.toBe("rgba(0, 0, 0, 0)")
+  await previewLink.hover()
+  // Hero 入场动画会让元素位移，悬停样式需要轮询等待其真正生效。
+  await expect
+    .poll(
+      async () =>
+        previewLink.evaluate(
+          (element) => getComputedStyle(element).backgroundColor !== "rgba(0, 0, 0, 0)"
+        ),
+      { timeout: 5_000 }
+    )
+    .toBe(true)
+  expect(await readColorBrightness(previewLink)).toBeGreaterThan(200)
 
   await page
     .getByRole("link", { name: /查看演示工作台|进入工作台|登录/ })
