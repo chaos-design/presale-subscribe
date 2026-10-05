@@ -6,6 +6,7 @@ import { z } from "zod"
 
 import { deleteCampaignMedia } from "@/lib/campaign-media"
 import { createCampaignConfig } from "@/lib/campaign-presets"
+import { createCampaignVersion } from "@/lib/campaign-version"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { type ActionState, campaignConfigSchema, initialActionState } from "@/lib/validation"
 import { type CampaignConfig, campaignTemplateValues } from "@/types/database"
@@ -138,17 +139,7 @@ export async function updateCampaignAction(
   }
 
   const context = await getAuthenticatedContext()
-
-  if (context.isDemo) {
-    return {
-      status: "success",
-      message:
-        result.data.intent === "publish"
-          ? "演示项目已模拟发布，连接 Supabase 后可持久保存。"
-          : "演示草稿已模拟保存，连接 Supabase 后可持久保存。",
-    }
-  }
-
+  const isPublishing = result.data.intent === "publish"
   const config: CampaignConfig = {
     title: result.data.title,
     slogan: result.data.slogan,
@@ -174,7 +165,17 @@ export async function updateCampaignAction(
     marquee: result.data.marquee,
     countdown: result.data.countdown,
   }
-  const isPublishing = result.data.intent === "publish"
+
+  if (context.isDemo) {
+    return {
+      status: "success",
+      message: isPublishing
+        ? "演示项目已模拟发布，连接 Supabase 后可持久保存。"
+        : "演示草稿已模拟保存，连接 Supabase 后可持久保存。",
+      version: isPublishing ? createCampaignVersion(config) : undefined,
+    }
+  }
+
   const { error } = await context.supabase
     .from("subscription_campaigns")
     .update({
@@ -203,6 +204,7 @@ export async function updateCampaignAction(
   return {
     status: "success",
     message: isPublishing ? "已发布最新版本" : "草稿已保存",
+    version: isPublishing ? createCampaignVersion(config) : undefined,
   }
 }
 

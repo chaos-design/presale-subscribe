@@ -37,6 +37,7 @@ import { useRouter } from "next/navigation"
 import {
   type ChangeEvent,
   type FocusEvent,
+  type FormEvent,
   type MouseEvent,
   useActionState,
   useEffect,
@@ -620,7 +621,8 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [isUploadingVideo, setIsUploadingVideo] = useState(false)
   const [state, formAction] = useActionState(updateCampaignAction, initialActionState)
-  const lastMessage = useRef("")
+  const [pendingIntent, setPendingIntent] = useState<string | null>(null)
+  const lastResult = useRef(state)
   const coverImageInputRef = useRef<HTMLInputElement>(null)
   const previewVideoInputRef = useRef<HTMLInputElement>(null)
   const localCoverImageUrl = useRef<string | null>(null)
@@ -646,20 +648,31 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
         (section !== "video" || Boolean(config.previewVideo.url))
     ).length + Number(config.countdown.enabled)
 
+  // 记录本次提交来自哪个按钮，保证只有它进入加载态。
+  function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
+    const submitter = (event.nativeEvent as SubmitEvent).submitter
+
+    setPendingIntent(submitter instanceof HTMLButtonElement ? submitter.value : null)
+  }
+
   useEffect(() => {
-    if (!state.message || state.message === lastMessage.current) {
+    if (!state.message || state === lastResult.current) {
       return
     }
 
-    lastMessage.current = state.message
+    lastResult.current = state
 
     if (state.status === "success") {
-      toast.success(state.message)
+      // 首次发布没有可对比的历史版本，只在已有线上快照时展示版本号。
+      toast.success(state.message, {
+        description:
+          state.version && campaign.published_config ? `版本 ${state.version}` : undefined,
+      })
       router.refresh()
     } else if (state.status === "error") {
       toast.error(state.message)
     }
-  }, [router, state])
+  }, [campaign.published_config, router, state])
 
   useEffect(() => {
     try {
@@ -1254,6 +1267,7 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
       action={formAction}
       className="campaign-studio min-h-screen bg-background text-foreground"
       data-editor-mode={previewMode}
+      onSubmit={handleFormSubmit}
     >
       <input type="hidden" name="campaignId" value={campaign.id} />
       <input type="hidden" name="slug" value={campaign.slug} />
@@ -1352,6 +1366,7 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
             variant="outline"
             className="border-[#FFCC33]/35 bg-[#FFCC33]/10 text-[#FFE08A] hover:bg-[#FFCC33] hover:text-[#171407]"
             pendingLabel="保存中"
+            pendingIntent={pendingIntent}
             aria-label="保存草稿"
           >
             <SaveIcon data-icon="inline-start" aria-hidden="true" />
@@ -1362,6 +1377,7 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
             value="publish"
             className="bg-primary text-primary-foreground shadow-lg shadow-primary/10 hover:bg-primary/90"
             pendingLabel="发布中"
+            pendingIntent={pendingIntent}
             aria-label="发布活动"
           >
             <SendIcon data-icon="inline-start" aria-hidden="true" />

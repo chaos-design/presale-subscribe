@@ -311,6 +311,7 @@ export type CampaignConfigInput = z.infer<typeof campaignConfigSchema>
 export interface ActionState {
   status: "idle" | "success" | "error"
   message: string
+  version?: string
   fieldErrors?: Record<string, string[] | undefined>
 }
 

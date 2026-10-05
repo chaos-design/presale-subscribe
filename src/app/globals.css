@@ -124,6 +124,18 @@
     0 18px 42px -30px color-mix(in oklab, var(--toast-bg) 88%, black);
 }
 
+/* 提示宽度随内容收缩，最大宽度由 Toaster 的 --width 决定；选择器特异性需高于 Sonner 运行时注入的样式 */
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"] {
+  width: fit-content;
+  max-width: var(--width);
+}
+
+[data-sonner-toaster] [data-sonner-toast][data-x-position="center"] {
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+}
+
 .cn-toast-success,
 .cn-toast[data-type="success"] {
   --toast-bg: var(--success-bg);
@@ -10122,10 +10134,6 @@ a.campaign-page-footer-github:focus-visible {
 }
 
 @media (max-width: 639px) {
-  [data-sonner-toaster] {
-    --width: calc(100vw - 1.5rem);
-  }
-
   .cn-toast {
     font-size: 0.875rem;
   }
