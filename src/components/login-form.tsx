@@ -130,17 +130,11 @@ function LegalAcceptance({
         className="flex flex-wrap gap-x-1 gap-y-0 font-normal text-muted-foreground"
       >
         <span>我已阅读并同意</span>
-        <Link
-          href="/terms"
-          className="font-medium text-foreground underline-offset-4 hover:underline"
-        >
+        <Link href="/terms" className="font-medium text-foreground hover:text-primary">
           《服务条款》
         </Link>
         <span>与</span>
-        <Link
-          href="/privacy"
-          className="font-medium text-foreground underline-offset-4 hover:underline"
-        >
+        <Link href="/privacy" className="font-medium text-foreground hover:text-primary">
           《隐私政策》
         </Link>
         {error ? (
@@ -623,7 +617,7 @@ export function LoginForm({
                           setOtpToken(event.target.value.replace(/\D/g, ""))
                           clearFeedback()
                         }}
-                        className="font-mono text-base tracking-[0.35em] placeholder:text-xs placeholder:tracking-normal"
+                        className="h-full font-mono text-base tracking-[0.35em] placeholder:text-xs placeholder:tracking-normal"
                         aria-invalid={Boolean(fieldError("otpToken"))}
                         required
                       />

@@ -95,7 +95,7 @@ export function ResetPasswordForm({ nextPath }: { nextPath: string }) {
           </FieldDescription>
           {error ? <FieldError>{error}</FieldError> : null}
         </Field>
-        <Button type="submit" size="lg" disabled={isSubmitting || !supabase}>
+        <Button type="submit" size="lg" className="h-11" disabled={isSubmitting || !supabase}>
           {isSubmitting ? (
             <Spinner data-icon="inline-start" />
           ) : (

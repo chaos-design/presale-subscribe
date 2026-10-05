@@ -22,6 +22,7 @@ export function AccountForm({ email, initialName }: { email: string; initialName
             id="full-name"
             name="fullName"
             defaultValue={initialName}
+            className="h-11"
             minLength={2}
             maxLength={48}
             autoComplete="name"
