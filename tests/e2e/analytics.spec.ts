@@ -76,7 +76,7 @@ test("analyzes traffic, conversion, and application responses", async ({ page },
 
   await expect(page.getByRole("heading", { name: "项目数据，逐层拆解。" })).toBeVisible()
   await expect(page.getByRole("combobox", { name: "选择分析项目" })).toContainText(
-    "Ahead 2.0 功能预告"
+    "REPS 2.0 功能预告"
   )
   await expect(page.locator(".analytics-metrics > div")).toHaveCount(6)
   await expect(page.getByRole("button", { name: "最近 30 天" })).toHaveAttribute(

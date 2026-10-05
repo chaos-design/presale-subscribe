@@ -68,7 +68,7 @@ export function LegalDocumentPage({
             </div>
             <div>
               <dt className="text-xs text-muted-foreground">适用产品</dt>
-              <dd className="mt-1 font-medium">Ahead</dd>
+              <dd className="mt-1 font-medium">REPS</dd>
             </div>
           </dl>
         </header>
@@ -104,7 +104,7 @@ export function LegalDocumentPage({
 
         <footer className="flex flex-col justify-between gap-5 py-10 sm:flex-row sm:items-center">
           <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">
-            第三方自行部署 Ahead 时，应根据实际主体、地区、基础设施和处理活动补充必要信息。
+            第三方自行部署 REPS 时，应根据实际主体、地区、基础设施和处理活动补充必要信息。
           </p>
           <Button variant="ghost" nativeButton={false} render={<Link href="/login" />}>
             <ArrowLeftIcon data-icon="inline-start" aria-hidden="true" />

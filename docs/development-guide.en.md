@@ -1,4 +1,4 @@
-# Ahead Development Guide
+# REPS Development Guide
 
 [简体中文](./development-guide.md)
 
@@ -91,32 +91,61 @@ in CI.
 | `src/components/` | Product components and shadcn/ui primitives |
 | `src/lib/` | Auth, queries, validation, presets, and Supabase helpers |
 | `src/types/database.ts` | Database and product types |
+| `public/brand/` | REPS brand artwork: seal, slogan badge, and home key visual |
 | `supabase/platform.sql` | Repeatable all-in-one database and Storage initialization |
 | `supabase/update.sql` | Current pending subscription-entry and media Storage policy upgrade |
 | `tests/unit/` | Vitest unit coverage and SQL text assertions |
 | `tests/integration/` | PGlite database script, grant, and behaviour tests |
 | `tests/e2e/` | Playwright user-flow coverage |
 
+## Brand artwork
+
+The SVGs under `public/brand/` are the source of REPS brand artwork. The wordmark is assembled from
+stroke paths rather than font files, so it can be inlined, recolored by CSS, and never degrades when
+a visitor lacks a particular font:
+
+| File | Use |
+| --- | --- |
+| `reps-mark.svg` | The seal, used in navigation and the dashboard; its colors are fixed and it does not follow `currentColor` |
+| `reps-slogan.svg` | The slogan badge used at the top of both READMEs |
+| `reps-key-visual.svg` | The home key visual; it carries its own track rotation and disables it under `prefers-reduced-motion` |
+
+`src/app/icon.svg` and `src/app/apple-icon.png` are app-icon copies of the same seal and must stay in
+sync with `reps-mark.svg`. The share image is rendered at build time by `src/app/opengraph-image.tsx`.
+After changing any artwork run `pnpm check` and confirm the navigation, home key visual, and icons
+still render correctly.
+
 ## Product and source-link configuration
 
-`src/lib/product-config.ts` centralizes the Ahead product name, wordmark, home path, plus the
+`src/lib/product-config.ts` centralizes the REPS product name, wordmark, home path, plus the
 product credit and GitHub repository URL shown in public project page footers. It promotes the
-Ahead project itself; it is not user-configured project or template content and is not copied into
+REPS project itself; it is not user-configured project or template content and is not copied into
 draft or published snapshots:
 
 ```ts
 export const productConfig = {
-  name: "Ahead",
-  wordmark: "AHEAD",
+  name: "REPS",
+  fullName: "Release, Email-capture, Preview & Subscription",
+  wordmark: "REPS",
+  stages: ["Release", "Email-capture", "Preview", "Subscription"],
+  slogan: "Every release, a way in.",
+  // 供分享图与站点元信息使用的英文描述；中文描述保留在 tagline。
+  description: "Prescribe the release. Capture the demand.",
+  tagline: "把功能预告做成一条可以追踪的发布链路",
   homePath: "/",
   productCredit: {
-    label: "MADE WITH AHEAD",
+    label: "MADE WITH REPS",
     description: "开源功能预告与预约订阅系统",
     year: "2026",
     githubUrl: "https://github.com/chaos-design/presale-subscribe",
   },
 } as const
 ```
+
+`name` and `fullName` expand the acronym, `stages` holds the English names of its four stages,
+`slogan` and `description` are the English tagline pair, and `tagline` is the Chinese description. The
+share image in `src/app/opengraph-image.tsx` only reads the English fields because the bundled Geist
+font has no Chinese glyphs.
 
 Before deployment, confirm `githubUrl` points at the public source repository for that deployment. The
 public reservation page renders it as an icon-only external link and opens it in a new tab. Editor

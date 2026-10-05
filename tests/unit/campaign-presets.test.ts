@@ -53,7 +53,7 @@ describe("campaign presets", () => {
       )
       expect(createCampaignConfig(option.value).header).toMatchObject({
         enabled: true,
-        brandLabel: "AHEAD",
+        brandLabel: "REPS",
         showSlogan: true,
       })
       expect(createCampaignConfig(option.value).marquee).toEqual({

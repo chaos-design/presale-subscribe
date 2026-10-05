@@ -774,7 +774,7 @@ const pageContentByTemplate: Record<CampaignTemplate, CampaignPageContent> = {
 
 export const defaultCampaignConfig: CampaignConfig = {
   title: "下一次更新，先让你知道",
-  slogan: "Make what's next worth waiting for.",
+  slogan: "Every release, a way in.",
   description: "留下邮箱，在新功能开放的第一时间收到通知。没有噪音，只有重要进展。",
   featureTitle: "为真正关心更新的人准备",
   featureDescription:
@@ -796,12 +796,12 @@ export const defaultCampaignConfig: CampaignConfig = {
   sectionOrder: [...getCampaignTemplateScheme("launch").layout.sectionOrder],
   header: {
     enabled: true,
-    brandLabel: "AHEAD",
+    brandLabel: "REPS",
     metaLabel: getCampaignTemplateScheme("launch").code,
     showSlogan: true,
   },
   marquee: {
-    content: "Make what's next worth waiting for.",
+    content: "Every release, a way in.",
     infinite: true,
     speed: 24,
   },

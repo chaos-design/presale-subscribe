@@ -136,7 +136,7 @@ export function PageSystemsCarousel() {
             <span className="size-2 rounded-full bg-[#28c840]" />
           </div>
           <div className="min-w-0 flex-1 truncate rounded-sm bg-black/25 px-3 py-1 font-mono text-[9px] text-white/40">
-            ahead.page/release/{activeOption.value}
+            reps.page/release/{activeOption.value}
           </div>
           <span className="hidden font-mono text-[8px] uppercase text-white/35 sm:block">
             {activeOption.code} / COVER

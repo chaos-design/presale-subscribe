@@ -434,7 +434,7 @@ export function LoginForm({
       setRegisterEmail(email)
       setRegisterPassword("")
       setConfirmPassword("")
-      setMessage("确认链接已发送到你的邮箱。打开链接完成验证后，将自动登录 Ahead。")
+      setMessage("确认链接已发送到你的邮箱。打开链接完成验证后，将自动登录 REPS。")
       setIsSubmitting(false)
     } catch (signUpError) {
       setFieldError("registerEmail", getAuthErrorMessage(signUpError))

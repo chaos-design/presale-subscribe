@@ -4,7 +4,7 @@
 
 ## Supported versions
 
-Ahead is deployed from `main`. Only the latest commit on `main` receives security fixes; if
+REPS is deployed from `main`. Only the latest commit on `main` receives security fixes; if
 you run your own deployment, update the image or redeploy on a regular schedule.
 
 | Version | Supported |

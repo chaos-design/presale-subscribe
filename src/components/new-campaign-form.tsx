@@ -238,7 +238,7 @@ export function NewCampaignForm({ initialTemplate }: { initialTemplate: Campaign
             </div>
             <AppWindowMacIcon aria-hidden="true" />
             <div className="new-campaign-browser-address">
-              <span>ahead.local/p/preview</span>
+              <span>reps.local/p/preview</span>
             </div>
             <span>{selectedTemplate.code}</span>
           </div>

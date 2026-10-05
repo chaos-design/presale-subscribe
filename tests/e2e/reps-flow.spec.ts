@@ -14,11 +14,13 @@ test("opens the campaign workspace and editor in demo mode", async ({ page }) =>
 
   await page.goto("/")
 
-  await expect(page.getByRole("heading", { name: "Ahead" })).toBeVisible()
+  await expect(page.getByRole("heading", { name: "REPS" })).toBeVisible()
+  // 首页主视觉必须真的加载出品牌图形，否则会退化成空白区域。
+  await expect(page.locator(".home-key-visual img")).toHaveJSProperty("naturalWidth", 900)
   const homeFooter = page.locator('[data-home-footer="product"]')
-  await expect(homeFooter).toContainText("MADE WITH AHEAD")
+  await expect(homeFooter).toContainText("MADE WITH REPS")
   await expect(homeFooter).toContainText("开源功能预告与预约订阅系统")
-  await expect(page.getByRole("link", { name: "在 GitHub 上查看 Ahead" })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "在 GitHub 上查看 REPS" })).toHaveAttribute(
     "href",
     productConfig.productCredit.githubUrl
   )
@@ -53,9 +55,7 @@ test("opens the campaign workspace and editor in demo mode", async ({ page }) =>
   await expect(page.getByRole("link", { name: "数据分析", exact: true })).toBeVisible()
   await expect(page.getByRole("link", { name: "模板", exact: true })).toBeVisible()
   await expect(page.getByRole("button", { name: "打开账号菜单" })).toBeVisible()
-  await expect(page.locator(".dashboard-header")).not.toContainText(
-    "Make what's next worth waiting for."
-  )
+  await expect(page.locator(".dashboard-header")).not.toContainText("Every release, a way in.")
   const searchBox = await page.getByRole("button", { name: "搜索工作区" }).boundingBox()
   expect(searchBox?.width ?? 0).toBeLessThanOrEqual(224)
   expect(searchBox?.x ?? Number.POSITIVE_INFINITY).toBeLessThan(500)
@@ -63,7 +63,7 @@ test("opens the campaign workspace and editor in demo mode", async ({ page }) =>
   const sidebarHeaderTrigger = page.getByRole("button", { name: "收起或展开侧栏" })
   await expect(sidebarHeaderTrigger).toBeVisible()
   const [brandBox, triggerBox] = await Promise.all([
-    sidebarHeader.getByRole("link", { name: "Ahead 首页" }).boundingBox(),
+    sidebarHeader.getByRole("link", { name: "REPS 首页" }).boundingBox(),
     sidebarHeaderTrigger.boundingBox(),
   ])
   expect(triggerBox?.x ?? 0).toBeGreaterThan((brandBox?.x ?? 0) + (brandBox?.width ?? 0))
@@ -404,7 +404,7 @@ test("cycles through page systems from the home carousel", async ({ page }) => {
 
 test("renders a published campaign and accepts a demo reservation", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto("/p/ahead-2-preview")
+  await page.goto("/p/reps-release-preview")
 
   await expect(page.getByRole("heading", { name: "下一次更新，先让你知道" })).toBeVisible()
   await expect(page.getByRole("heading", { name: "为真正关心更新的人准备" })).toBeVisible()
@@ -698,7 +698,7 @@ test("previews campaign configuration and copies the published share URL", async
     2
   )
 
-  await page.getByLabel("主标题").fill("AHEADSUPERCALIFRAGILISTICEXPIALIDOCIOUS下一代协作界面")
+  await page.getByLabel("主标题").fill("REPSSUPERCALIFRAGILISTICEXPIALIDOCIOUS下一代协作界面")
   const desktopPreviewMetrics = await page
     .locator('[data-preview-device="desktop"] .preview-device-scroll')
     .evaluate((viewport) => ({
@@ -812,7 +812,7 @@ test("previews campaign configuration and copies the published share URL", async
   await expect(page.getByText("分享链接已复制")).toBeVisible()
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
-    .toBe(`${new URL(page.url()).origin}/p/ahead-2-preview`)
+    .toBe(`${new URL(page.url()).origin}/p/reps-release-preview`)
 })
 
 test("summarizes subscribers and opens response intelligence in a drawer", async ({
@@ -821,7 +821,7 @@ test("summarizes subscribers and opens response intelligence in a drawer", async
 }) => {
   await page.goto("/dashboard/campaigns/demo-launch/subscribers")
 
-  await expect(page.getByRole("heading", { name: "Ahead 2.0 功能预告" })).toBeVisible()
+  await expect(page.getByRole("heading", { name: "REPS 2.0 功能预告" })).toBeVisible()
   await expect(page.getByRole("cell", { name: "来源", exact: true })).toBeVisible()
   await expect(page.getByRole("cell", { name: "地区", exact: true })).toBeVisible()
   await expect(page.getByRole("cell", { name: "参与度", exact: true })).toBeVisible()
@@ -1019,7 +1019,7 @@ test("keeps primary pages usable on mobile", async ({ page }) => {
   await expect(page.getByRole("button", { name: "打开导航" })).toBeVisible()
   await expect(page.locator("body")).not.toHaveCSS("overflow-x", "scroll")
 
-  await page.goto("/p/ahead-2-preview")
+  await page.goto("/p/reps-release-preview")
   await page.locator(".campaign-questionnaire-title").scrollIntoViewIfNeeded()
   await expect(page.getByRole("heading", { name: "在抵达之前，留下你的坐标" })).toBeVisible()
   const publicFormMetrics = await page.locator("form.campaign-subscribe").evaluate((form) => {
@@ -1099,7 +1099,7 @@ test("exposes the migrated account recovery and legal pages", async ({ page }) =
   await page.goto("/login")
   await page.getByRole("tab", { name: "注册" }).click()
   await expect(page.getByText(/至少 8 个字符，并包含/)).toHaveCount(0)
-  await page.getByLabel("设置密码").fill("Ahead@2026")
+  await page.getByLabel("设置密码").fill("REPS@2026")
   await expect(page.getByText("已满足安全要求，请勿与其他网站共用。")).toBeVisible()
   await expect(page.getByLabel("确认密码")).toHaveAttribute("placeholder", "请再次输入密码")
   await page.getByLabel("确认密码").fill("Mismatch@2026")
@@ -1133,7 +1133,7 @@ test("exposes the migrated account recovery and legal pages", async ({ page }) =
   expect(confirmFieldStyles.labelColor).not.toBe(confirmFieldStyles.errorColor)
   expect(confirmFieldStyles.labelFontSize).toBeGreaterThanOrEqual(15)
   expect(confirmFieldStyles.placeholderFontSize).toBeLessThan(confirmFieldStyles.labelFontSize)
-  await page.getByLabel("确认密码").fill("Ahead@2026")
+  await page.getByLabel("确认密码").fill("REPS@2026")
   await expect(confirmPasswordError).toHaveCount(0)
 
   await expect(page.getByRole("link", { name: "《服务条款》" })).toBeVisible()

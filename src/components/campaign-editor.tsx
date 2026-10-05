@@ -584,7 +584,7 @@ function PreviewDeviceFrame({
         </div>
         <AppWindowMacIcon className="size-3.5 shrink-0 text-white/35" aria-hidden="true" />
         <div className="min-w-0 flex-1 truncate rounded-sm border border-white/10 bg-black/20 px-2 py-1 font-mono text-[9px] text-white/40">
-          ahead.local/p/{slug}
+          reps.local/p/{slug}
         </div>
         <span className="font-mono text-[8px] text-white/30">1440</span>
       </div>
@@ -640,7 +640,7 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
   const previewAnimationKey = `${config.template}:${config.motion}`
   const templatePickerId = "campaign-template-picker"
   const sectionOrganizerId = "campaign-section-organizer"
-  const collapsedPanelsStorageKey = `ahead:campaign-editor:collapsed:${campaign.id}`
+  const collapsedPanelsStorageKey = `reps:campaign-editor:collapsed:${campaign.id}`
   const activeBodySectionCount =
     config.sectionOrder.filter(
       (section) =>
@@ -2461,7 +2461,7 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
                   {selectedTemplate?.label}全屏预览
                 </DialogTitle>
                 <p className="truncate font-mono text-[9px] text-white/40">
-                  ahead.local/p/{campaign.slug}
+                  reps.local/p/{campaign.slug}
                 </p>
               </div>
             </div>

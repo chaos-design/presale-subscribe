@@ -1,15 +1,18 @@
-# Ahead User Guide
+# REPS User Guide
 
 [简体中文](./user-guide.md)
 
 ## 1. Introduction
 
-Ahead is a feature announcement and reservation system for product teams. Users can create a
-campaign from a template, edit a draft, publish an immutable public snapshot, and collect email
-reservations and questionnaire answers through a public link. The workspace also provides
-subscriber details, CSV export, and traffic and conversion analytics.
+REPS is a feature announcement and reservation system for product teams. The name expands to
+**Release, Email-capture, Preview & Subscription**: publish a campaign page (Release), keep it
+previewable (Preview), collect emails through the public link (Email-capture), and turn that
+interest into a reachable subscription list (Subscription). Users can create a campaign from a
+template, edit a draft, publish an immutable public snapshot, and collect email reservations and
+questionnaire answers through a public link. The workspace also provides subscriber details, CSV
+export, and traffic and conversion analytics.
 
-Ahead keeps draft and published content separate:
+REPS keeps draft and published content separate:
 
 - A draft is visible only to its owner, and saving it does not change the public page.
 - Publishing copies the current draft into a new public snapshot.
@@ -72,7 +75,7 @@ persisted.
 2. Enter an email, password, and password confirmation.
 3. Read and accept the terms of service and privacy policy.
 4. Submit the form and open the link in the confirmation email.
-5. Return to Ahead. If no session was created, sign in with the confirmed account.
+5. Return to REPS. If no session was created, sign in with the confirmed account.
 
 A password must contain at least eight characters and meet the strength rules shown on the page.
 
@@ -114,7 +117,7 @@ use the card's **Edit** button to change its next draft.
 3. Select a page template and review the live preview.
 4. Select **Create and edit**.
 
-Ahead generates a stable public slug. A template supplies initial content and visual settings and
+REPS generates a stable public slug. A template supplies initial content and visual settings and
 can still be changed after creation.
 
 ## 7. Edit a reservation page
@@ -198,7 +201,7 @@ Open **Analytics**, then select a published campaign and date range to review:
 - Distribution of single-choice and multiple-choice answers.
 
 Analytics only come from published pages. Visits are not reported when the browser enables Do Not
-Track. Ahead does not store IP addresses or raw User-Agent values. Location first uses coarse
+Track. REPS does not store IP addresses or raw User-Agent values. Location first uses coarse
 hosting-platform headers; when unavailable, the server transiently resolves the visitor IP and
 stores only country, region, and city.
 
@@ -213,7 +216,7 @@ On `/p/[slug]`, a visitor:
 3. Completes every required question; choice answers must come from the displayed options.
 4. Submits the form and receives the configured success message.
 
-The Ahead credit and GitHub icon in the footer point to the Ahead project itself and are not part
+The REPS credit and GitHub icon in the footer point to the REPS project itself and are not part
 of the campaign template or published snapshot. The deployment owner configures the link through
 `productCredit.githubUrl` in `src/lib/product-config.ts`.
 
@@ -289,7 +292,7 @@ the deployment administrator through a controlled Supabase Auth process.
 - Product or deployment questions: search or open an Issue in the repository linked by the footer
   GitHub icon. Include reproduction steps, browser version, and redacted error details.
 - Account, permission, email, or production-data issues: contact the administrator of the current
-  Ahead instance.
+  REPS instance.
 - Security or privacy reports: report privately as described in the repository
   [security policy](../SECURITY.md) and never attach secrets or personal data to a public Issue.
 - Contributing changes: follow the repository [contributing guide](../CONTRIBUTING.md).

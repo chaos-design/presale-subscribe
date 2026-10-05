@@ -1,8 +1,8 @@
-# Ahead 架构说明
+# REPS 架构说明
 
 [English](./architecture.en.md)
 
-本文面向开发与运维，说明 Ahead 的分层边界、数据模型、RPC 契约和关键请求流。
+本文面向开发与运维，说明 REPS 的分层边界、数据模型、RPC 契约和关键请求流。
 产品操作请看[使用手册](./user-guide.md)，本地环境与命令请看[开发手册](./development-guide.md)，
 生产发布请看[部署手册](./deployment-guide.md)。
 
@@ -175,7 +175,7 @@ Server Action 中确认活动归属；数据库策略再用 `can_manage_campaign
 
 - 应用不创建 Supabase 客户端，所有页面走 `src/lib/campaigns.ts` 中的演示数据，
   写入操作直接返回失败，刷新后修改丢失。
-- 演示活动使用固定 slug `ahead-2-preview`，上报接口对该 slug 直接返回 `204`。
+- 演示活动使用固定 slug `reps-release-preview`，上报接口对该 slug 直接返回 `204`。
 - Playwright 正是利用该模式跑主流程，因此 E2E 不依赖任何数据库。
 
 `NEXT_PUBLIC_SUPABASE_ANON_KEY` 仅作为旧部署的兼容回退，新部署不要配置。

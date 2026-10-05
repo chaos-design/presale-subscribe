@@ -322,7 +322,7 @@ test("centers copy inside circular hero templates", async ({ page }, testInfo) =
 })
 
 test("runs the public hero atmosphere with GSAP", async ({ page }) => {
-  await page.goto("/p/ahead-2-preview")
+  await page.goto("/p/reps-release-preview")
 
   const atmosphereSignal = page.locator(".campaign-page-hero-atmosphere > span").first()
   await expect(atmosphereSignal).toBeAttached()
@@ -1088,16 +1088,14 @@ test("renders configurable header credit and equal subscription controls", async
 }, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.setViewportSize({ width: 1440, height: 1000 })
-  await page.goto("/p/ahead-2-preview")
+  await page.goto("/p/reps-release-preview")
 
-  await expect(page.locator(".campaign-page-header-slogan")).toHaveText(
-    "Make what's next worth waiting for."
-  )
-  await expect(page.locator(".campaign-page-footer")).toContainText("MADE WITH AHEAD")
+  await expect(page.locator(".campaign-page-header-slogan")).toHaveText("Every release, a way in.")
+  await expect(page.locator(".campaign-page-footer")).toContainText("MADE WITH REPS")
   await expect(page.locator(".campaign-page-footer-description")).toHaveText(
     "开源功能预告与预约订阅系统"
   )
-  await expect(page.getByRole("link", { name: "在 GitHub 上查看 Ahead" })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "在 GitHub 上查看 REPS" })).toHaveAttribute(
     "href",
     productConfig.productCredit.githubUrl
   )
@@ -1206,7 +1204,7 @@ test("renders configurable header credit and equal subscription controls", async
         .evaluate((element) => getComputedStyle(element).visibility)
     )
     .toBe("visible")
-  await expect(page.locator(".campaign-page-footer-slogan")).toHaveText("MADE WITH AHEAD")
+  await expect(page.locator(".campaign-page-footer-slogan")).toHaveText("MADE WITH REPS")
   const mobileOverflow = await page
     .locator(".campaign-page")
     .evaluate((campaignPage) => campaignPage.scrollWidth - campaignPage.clientWidth)

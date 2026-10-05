@@ -162,8 +162,8 @@ function createDemoWorkspaceAnalytics(days: AnalyticsRange): ProjectAnalytics {
     campaigns: [
       {
         id: "demo-launch",
-        name: "Ahead 2.0 功能预告",
-        slug: "ahead-2-preview",
+        name: "REPS 2.0 功能预告",
+        slug: "reps-release-preview",
         pageViews: launchPageViews,
         uniqueVisitors: launchVisitors,
         sessions: Math.round(sessions * 0.74),
@@ -241,7 +241,7 @@ function createDemoWorkspaceAnalytics(days: AnalyticsRange): ProjectAnalytics {
     questionInsights: [
       {
         campaignId: "demo-launch",
-        campaignName: "Ahead 2.0 功能预告",
+        campaignName: "REPS 2.0 功能预告",
         questionId: "first-signal",
         label: "你最想先看到哪一部分？",
         type: "single_choice",
@@ -256,7 +256,7 @@ function createDemoWorkspaceAnalytics(days: AnalyticsRange): ProjectAnalytics {
       },
       {
         campaignId: "demo-launch",
-        campaignName: "Ahead 2.0 功能预告",
+        campaignName: "REPS 2.0 功能预告",
         questionId: "priority-signals",
         label: "哪些信息会帮助你判断是否加入首批体验？",
         type: "multiple_choice",
@@ -272,7 +272,7 @@ function createDemoWorkspaceAnalytics(days: AnalyticsRange): ProjectAnalytics {
       },
       {
         campaignId: "demo-launch",
-        campaignName: "Ahead 2.0 功能预告",
+        campaignName: "REPS 2.0 功能预告",
         questionId: "one-more-thing",
         label: "还有什么，会让这次更新对你更有价值？",
         type: "short_text",

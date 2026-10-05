@@ -1,7 +1,7 @@
 {
   "name": "presale-subscribe",
   "version": "0.1.0",
-  "description": "Ahead: open-source feature announcement and reservation system",
+  "description": "REPS: open-source feature announcement and reservation system",
   "license": "Apache-2.0",
   "private": true,
   "packageManager": "pnpm@11.21.0",

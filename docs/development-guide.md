@@ -1,4 +1,4 @@
-# Ahead 开发手册
+# REPS 开发手册
 
 [English](./development-guide.en.md)
 
@@ -79,31 +79,57 @@ supabase db reset
 | `src/components/` | 业务组件与 shadcn/ui 基础组件 |
 | `src/lib/` | 认证、查询、校验、预设和 Supabase helper |
 | `src/types/database.ts` | 数据库与业务类型 |
+| `public/brand/` | REPS 品牌图形：印章、slogan 徽章与首页主视觉 |
 | `supabase/platform.sql` | 可整份重复执行的数据库与 Storage 初始化脚本 |
 | `supabase/update.sql` | 当前尚待执行的预约入口保护与媒体 Storage 策略增量更新 |
 | `tests/unit/` | Vitest 单元测试与 SQL 文本断言 |
 | `tests/integration/` | PGlite 数据库脚本、授权与行为集成测试 |
 | `tests/e2e/` | Playwright 主流程测试 |
 
+## 品牌图形
+
+`public/brand/` 下的 SVG 是 REPS 的品牌图形来源，字标全部由描边路径拼成，不依赖字体文件，
+因此可以原样内联、被 CSS 着色，也不会因为访客缺少某个字体而降级：
+
+| 文件 | 用途 |
+| --- | --- |
+| `reps-mark.svg` | 印章图形，导航、工作台与 favicon 使用；色值固定，不随 `currentColor` 变化 |
+| `reps-slogan.svg` | 带 slogan 的品牌徽章，README 顶部使用 |
+| `reps-key-visual.svg` | 首页主视觉，自带轨道旋转动画，并在 `prefers-reduced-motion` 下停用 |
+
+`src/app/icon.svg` 与 `src/app/apple-icon.png` 是同一枚印章的应用图标副本，需要与
+`reps-mark.svg` 同步；分享图由 `src/app/opengraph-image.tsx` 在构建时渲染。改动任何一处
+图形后运行 `pnpm check`，并确认导航、首页主视觉和图标都没有变形。
+
 ## 产品与源码链接配置
 
-`src/lib/product-config.ts` 集中维护 Ahead 产品自身的名称、字标、首页地址，以及显示在
-公开项目页底部的产品署名和 GitHub 仓库地址。它用于推广 Ahead 项目本身，不属于用户在
+`src/lib/product-config.ts` 集中维护 REPS 产品自身的名称、字标、首页地址，以及显示在
+公开项目页底部的产品署名和 GitHub 仓库地址。它用于推广 REPS 项目本身，不属于用户在
 模板中配置的项目内容，也不会进入项目的草稿或发布快照：
 
 ```ts
 export const productConfig = {
-  name: "Ahead",
-  wordmark: "AHEAD",
+  name: "REPS",
+  fullName: "Release, Email-capture, Preview & Subscription",
+  wordmark: "REPS",
+  stages: ["Release", "Email-capture", "Preview", "Subscription"],
+  slogan: "Every release, a way in.",
+  // 供分享图与站点元信息使用的英文描述；中文描述保留在 tagline。
+  description: "Prescribe the release. Capture the demand.",
+  tagline: "把功能预告做成一条可以追踪的发布链路",
   homePath: "/",
   productCredit: {
-    label: "MADE WITH AHEAD",
+    label: "MADE WITH REPS",
     description: "开源功能预告与预约订阅系统",
     year: "2026",
     githubUrl: "https://github.com/chaos-design/presale-subscribe",
   },
 } as const
 ```
+
+`name` 与 `fullName` 展开缩写，`stages` 是四个环节的英文名，`slogan` 是英文 slogan，
+`description` 是英文一句话描述，`tagline` 是中文描述。分享图 `src/app/opengraph-image.tsx`
+只使用英文字段，因为 `ImageResponse` 内置的 Geist 字体不含中文字形。
 
 部署前应确认 `githubUrl` 指向该部署对应的公开源码仓库。公开预约页会把它渲染成仅含
 GitHub 图标的外部链接，并在新标签页打开；编辑器预览只显示图标，不触发跳转。修改

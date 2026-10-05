@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" width="900" height="900" role="img" aria-label="REPS — Release, Email-capture, Preview &amp; Subscription">
+  <title>REPS</title>
+  <desc>Release, Email-capture, Preview &amp; Subscription</desc>
+  <defs>
+    <radialGradient id="repsGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#d9211f" stop-opacity="0.26" />
+      <stop offset="60%" stop-color="#d9211f" stop-opacity="0.07" />
+      <stop offset="100%" stop-color="#d9211f" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c6ff3e" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#c6ff3e" stop-opacity="0" />
+    </radialGradient>
+    <style>
+      .track { transform-origin: 450px 450px; animation: reps-spin 44s linear infinite; }
+      .track-reverse { transform-origin: 450px 450px; animation: reps-spin 28s linear infinite reverse; }
+      .beacon { animation: reps-blink 2.4s ease-in-out infinite; }
+      @keyframes reps-spin { to { transform: rotate(360deg); } }
+      @keyframes reps-blink { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+      @media (prefers-reduced-motion: reduce) {
+        .track, .track-reverse, .beacon { animation: none; }
+      }
+    </style>
+  </defs>
+
+  <circle cx="450" cy="450" r="372" fill="url(#repsGlow)" />
+
+  <!-- crosshair -->
+  <g stroke="#ffffff" stroke-opacity="0.09" stroke-width="1">
+    <path d="M6 450H894" />
+    <path d="M450 6V894" />
+  </g>
+
+  <!-- outer dashed track -->
+  <circle class="track" cx="450" cy="450" r="438" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" stroke-dasharray="2 10" />
+
+  <!-- inner signal track -->
+  <circle class="track-reverse" cx="450" cy="450" r="216" fill="none" stroke="#00d4c8" stroke-opacity="0.24" stroke-width="1" stroke-dasharray="3 9" />
+
+  <!-- four stations: R E P S, one per quadrant -->
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.17" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(202.5 142.5) scale(1.2)">
+      <path d="M20 90V10H56Q78 10 78 33T56 56H20M52 56 80 90" />
+    </g>
+    <g transform="translate(637.5 142.5) scale(1.2)">
+      <path d="M22 10V90M22 10H78M22 50H68M22 90H78" />
+    </g>
+    <g transform="translate(202.5 637.5) scale(1.2)">
+      <path d="M24 90V10H56Q78 10 78 32T56 54H24" />
+    </g>
+    <g transform="translate(637.5 637.5) scale(1.2)">
+      <path d="M76 24Q69 10 49 10Q24 10 24 31Q24 50 50 50Q76 50 76 69Q76 90 50 90Q28 90 21 76" />
+    </g>
+  </g>
+
+  <!-- quadrant brackets: one per acronym stage -->
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.26" stroke-width="1.5" stroke-linecap="round">
+    <path d="M147.2 207.8A392 392 0 0 1 207.8 147.2" />
+    <path d="M692.2 147.2A392 392 0 0 1 752.8 207.8" />
+    <path d="M752.8 692.2A392 392 0 0 1 692.2 752.8" />
+    <path d="M207.8 752.8A392 392 0 0 1 147.2 692.2" />
+  </g>
+
+  <!-- stage nodes on the diagonal radii -->
+  <g fill="#c6ff3e">
+    <circle class="beacon" cx="759.6" cy="140.4" r="4.5" />
+    <circle class="beacon" cx="759.6" cy="759.6" r="4.5" />
+  </g>
+  <g fill="#00d4c8">
+    <circle class="beacon" cx="140.4" cy="759.6" r="4.5" />
+  </g>
+  <g fill="#ff5b36">
+    <circle class="beacon" cx="140.4" cy="140.4" r="4.5" />
+  </g>
+  <circle cx="140.4" cy="140.4" r="22" fill="url(#nodeGlow)" />
+
+  <!-- the seal -->
+  <g transform="translate(260 260) scale(0.7422)">
+    <path fill="#d9211f" d="M256 6Q391.3 120.8 506 256Q391.3 391.3 256 506Q120.8 391.3 6 256Q120.8 120.8 256 6Z" />
+    <g fill="none" stroke="#fff8f2" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M256 39Q273.2 76 283.1 66.1Q293 56.2 310.3 93.3Q327.5 130.3 337.4 120.4Q347.3 110.5 364.5 147.5Q381.7 184.5 391.6 174.6Q401.5 164.7 418.8 201.8Q436 238.8 445.9 228.9Q455.8 219 473 256" />
+      <path d="M256 39Q273.2 76 283.1 66.1Q293 56.2 310.3 93.3Q327.5 130.3 337.4 120.4Q347.3 110.5 364.5 147.5Q381.7 184.5 391.6 174.6Q401.5 164.7 418.8 201.8Q436 238.8 445.9 228.9Q455.8 219 473 256" transform="rotate(90 256 256)" />
+      <path d="M256 39Q273.2 76 283.1 66.1Q293 56.2 310.3 93.3Q327.5 130.3 337.4 120.4Q347.3 110.5 364.5 147.5Q381.7 184.5 391.6 174.6Q401.5 164.7 418.8 201.8Q436 238.8 445.9 228.9Q455.8 219 473 256" transform="rotate(180 256 256)" />
+      <path d="M256 39Q273.2 76 283.1 66.1Q293 56.2 310.3 93.3Q327.5 130.3 337.4 120.4Q347.3 110.5 364.5 147.5Q381.7 184.5 391.6 174.6Q401.5 164.7 418.8 201.8Q436 238.8 445.9 228.9Q455.8 219 473 256" transform="rotate(270 256 256)" />
+    </g>
+    <g fill="#fff8f2">
+      <circle cx="256" cy="39" r="10.5" />
+      <circle cx="473" cy="256" r="10.5" />
+      <circle cx="256" cy="473" r="10.5" />
+      <circle cx="39" cy="256" r="10.5" />
+    </g>
+    <g fill="none" stroke="#fff8f2" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <g transform="translate(142 142)">
+        <path d="M20 90V10H56Q78 10 78 33T56 56H20M52 56 80 90" />
+      </g>
+      <g transform="translate(270 142)">
+        <path d="M22 10V90M22 10H78M22 50H68M22 90H78" />
+      </g>
+      <g transform="translate(142 270)">
+        <path d="M24 90V10H56Q78 10 78 32T56 54H24" />
+      </g>
+      <g transform="translate(270 270)">
+        <path d="M76 24Q69 10 49 10Q24 10 24 31Q24 50 50 50Q76 50 76 69Q76 90 50 90Q28 90 21 76" />
+      </g>
+    </g>
+  </g>
+</svg>

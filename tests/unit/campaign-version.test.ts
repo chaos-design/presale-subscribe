@@ -20,7 +20,7 @@ describe("campaign content version", () => {
   it("changes when any published content changes", () => {
     const config = createCampaignConfig("launch")
 
-    expect(createCampaignVersion({ ...config, title: "Ahead 3.0" })).not.toBe(
+    expect(createCampaignVersion({ ...config, title: "REPS 3.0" })).not.toBe(
       createCampaignVersion(config)
     )
     expect(

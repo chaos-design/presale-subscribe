@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "登录",
-  description: "登录 Ahead 管理你的功能预告与订阅者。",
+  description: "登录 REPS 管理你的功能预告与订阅者。",
 }
 
 export default async function LoginPage({
@@ -43,23 +43,9 @@ export default async function LoginPage({
       <section className="home-hero relative hidden min-h-screen overflow-hidden bg-[#080a09] lg:block">
         <div className="app-grid absolute inset-0 opacity-15" aria-hidden="true" />
         <div className="home-signal-sweep" aria-hidden="true" />
-        <div className="home-orbit-stage" aria-hidden="true">
-          <div className="home-orbit home-orbit-outer">
-            <i />
-          </div>
-          <div className="home-orbit home-orbit-middle">
-            <i />
-          </div>
-          <div className="home-orbit home-orbit-inner">
-            <i />
-          </div>
-          <div className="home-target">
-            <span>ACCESS</span>
-            <strong>01</strong>
-            <span>SECURE</span>
-          </div>
-          <div className="home-vector home-vector-x" />
-          <div className="home-vector home-vector-y" />
+        <div className="home-key-visual" aria-hidden="true">
+          {/* biome-ignore lint/performance/noImgElement: the key visual self-animates and must stay an SVG asset */}
+          <img src="/brand/reps-key-visual.svg" alt="" width={900} height={900} />
         </div>
         <div className="relative z-10 flex h-full flex-col justify-between p-10 text-white">
           <BrandMark className="text-white" />
@@ -68,7 +54,7 @@ export default async function LoginPage({
               “发布不是最后一步，它是期待被兑现的那一刻。”
             </p>
             <footer className="mt-6 font-mono text-[11px] uppercase text-white/65">
-              Ahead publishing notes
+              REPS publishing notes
             </footer>
           </blockquote>
         </div>
@@ -91,7 +77,7 @@ export default async function LoginPage({
                   <KeyRoundIcon aria-hidden="true" />
                 </div>
                 <div className="min-w-0">
-                  <CardTitle className="text-xl">进入 Ahead</CardTitle>
+                  <CardTitle className="text-xl">进入 REPS</CardTitle>
                   <CardDescription className="mt-1">
                     使用账号密码登录，新账号需完成邮箱确认。
                   </CardDescription>
