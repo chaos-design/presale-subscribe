@@ -58,9 +58,23 @@ export default async function HomePage() {
           aria-hidden="true"
         />
         <div className="home-signal-sweep" aria-hidden="true" />
-        <div className="home-key-visual" data-home-hero="key-visual" aria-hidden="true">
-          {/* biome-ignore lint/performance/noImgElement: the key visual self-animates and must stay an SVG asset */}
-          <img src="/brand/reps-key-visual.svg" alt="" width={900} height={900} />
+        <div className="home-orbit-stage" data-home-hero="orbit" aria-hidden="true">
+          <div className="home-orbit home-orbit-outer">
+            <i />
+          </div>
+          <div className="home-orbit home-orbit-middle">
+            <i />
+          </div>
+          <div className="home-orbit home-orbit-inner">
+            <i />
+          </div>
+          <div className="home-target">
+            <span>RELEASE</span>
+            <strong>01</strong>
+            <span>LOCKED</span>
+          </div>
+          <div className="home-vector home-vector-x" />
+          <div className="home-vector home-vector-y" />
         </div>
 
         <header className="home-command-nav relative z-10" data-home-hero="nav">

@@ -15,8 +15,6 @@ test("opens the campaign workspace and editor in demo mode", async ({ page }) =>
   await page.goto("/")
 
   await expect(page.getByRole("heading", { name: "REPS" })).toBeVisible()
-  // 首页主视觉必须真的加载出品牌图形，否则会退化成空白区域。
-  await expect(page.locator(".home-key-visual img")).toHaveJSProperty("naturalWidth", 900)
   const homeFooter = page.locator('[data-home-footer="product"]')
   await expect(homeFooter).toContainText("MADE WITH REPS")
   await expect(homeFooter).toContainText("开源功能预告与预约订阅系统")

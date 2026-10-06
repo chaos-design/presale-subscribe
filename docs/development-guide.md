@@ -79,7 +79,7 @@ supabase db reset
 | `src/components/` | 业务组件与 shadcn/ui 基础组件 |
 | `src/lib/` | 认证、查询、校验、预设和 Supabase helper |
 | `src/types/database.ts` | 数据库与业务类型 |
-| `public/brand/` | REPS 品牌图形：印章、slogan 徽章与首页主视觉 |
+| `public/brand/` | REPS 品牌图形：印章与 slogan 徽章 |
 | `supabase/platform.sql` | 可整份重复执行的数据库与 Storage 初始化脚本 |
 | `supabase/update.sql` | 当前尚待执行的预约入口保护与媒体 Storage 策略增量更新 |
 | `tests/unit/` | Vitest 单元测试与 SQL 文本断言 |
@@ -95,11 +95,10 @@ supabase db reset
 | --- | --- |
 | `reps-mark.svg` | 印章图形，导航、工作台与 favicon 使用；色值固定，不随 `currentColor` 变化 |
 | `reps-slogan.svg` | 带 slogan 的品牌徽章，README 顶部使用 |
-| `reps-key-visual.svg` | 首页主视觉，自带轨道旋转动画，并在 `prefers-reduced-motion` 下停用 |
 
 `src/app/icon.svg` 与 `src/app/apple-icon.png` 是同一枚印章的应用图标副本，需要与
 `reps-mark.svg` 同步；分享图由 `src/app/opengraph-image.tsx` 在构建时渲染。改动任何一处
-图形后运行 `pnpm check`，并确认导航、首页主视觉和图标都没有变形。
+图形后运行 `pnpm check`，并确认导航和图标都没有变形。
 
 ## 产品与源码链接配置
 

@@ -43,9 +43,23 @@ export default async function LoginPage({
       <section className="home-hero relative hidden min-h-screen overflow-hidden bg-[#080a09] lg:block">
         <div className="app-grid absolute inset-0 opacity-15" aria-hidden="true" />
         <div className="home-signal-sweep" aria-hidden="true" />
-        <div className="home-key-visual" aria-hidden="true">
-          {/* biome-ignore lint/performance/noImgElement: the key visual self-animates and must stay an SVG asset */}
-          <img src="/brand/reps-key-visual.svg" alt="" width={900} height={900} />
+        <div className="home-orbit-stage" aria-hidden="true">
+          <div className="home-orbit home-orbit-outer">
+            <i />
+          </div>
+          <div className="home-orbit home-orbit-middle">
+            <i />
+          </div>
+          <div className="home-orbit home-orbit-inner">
+            <i />
+          </div>
+          <div className="home-target">
+            <span>ACCESS</span>
+            <strong>01</strong>
+            <span>SECURE</span>
+          </div>
+          <div className="home-vector home-vector-x" />
+          <div className="home-vector home-vector-y" />
         </div>
         <div className="relative z-10 flex h-full flex-col justify-between p-10 text-white">
           <BrandMark className="text-white" />

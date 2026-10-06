@@ -516,17 +516,127 @@
   padding-left: 0;
 }
 
-.home-key-visual {
+.home-orbit-stage {
   position: absolute;
   top: 12%;
   right: max(2%, calc((100vw - 1600px) / 2));
   width: min(56vw, 680px);
   aspect-ratio: 1;
+  color: rgb(255 255 255 / 38%);
 }
 
-.home-key-visual img {
+.home-orbit,
+.home-target,
+.home-vector {
+  position: absolute;
+}
+
+.home-orbit {
+  inset: 50% auto auto 50%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+
+.home-orbit::before,
+.home-orbit::after {
+  position: absolute;
+  content: "";
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: inherit;
+}
+
+.home-orbit::before {
+  inset: 8%;
+}
+
+.home-orbit::after {
+  inset: 23%;
+  border-style: dashed;
+}
+
+.home-orbit > i {
+  position: absolute;
+  top: 50%;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  translate: 0 -50%;
+  border-radius: 999px;
+  background: #ff5b36;
+  box-shadow: 0 0 24px #ff5b36;
+}
+
+.home-orbit-outer {
   width: 100%;
-  height: 100%;
+  animation: orbit-rotate 26s linear infinite;
+}
+
+.home-orbit-middle {
+  width: 72%;
+  color: rgb(0 212 200 / 50%);
+  animation: orbit-rotate-reverse 17s linear infinite;
+}
+
+.home-orbit-middle > i {
+  background: #00d4c8;
+  box-shadow: 0 0 22px #00d4c8;
+}
+
+.home-orbit-inner {
+  width: 44%;
+  color: rgb(198 255 62 / 42%);
+  animation: orbit-rotate 11s linear infinite;
+}
+
+.home-orbit-inner > i {
+  background: #c6ff3e;
+  box-shadow: 0 0 18px #c6ff3e;
+}
+
+.home-target {
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 27%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  place-content: center;
+  border: 1px solid rgb(255 255 255 / 24%);
+  background: #080a09;
+  text-align: center;
+  font-family: var(--font-ibm-plex-mono), monospace;
+}
+
+.home-target span {
+  font-size: 8px;
+  color: rgb(255 255 255 / 42%);
+}
+
+.home-target strong {
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  color: white;
+}
+
+.home-vector {
+  top: 50%;
+  left: 50%;
+  background: rgb(255 255 255 / 14%);
+}
+
+.home-vector-x {
+  width: 118%;
+  height: 1px;
+  translate: -50% 0;
+}
+
+.home-vector-y {
+  width: 1px;
+  height: 118%;
+  translate: 0 -50%;
 }
 
 .home-signal-sweep {
@@ -3266,7 +3376,7 @@
 }
 
 @media (max-width: 767px) {
-  .home-key-visual {
+  .home-orbit-stage {
     top: 14%;
     right: -43%;
     width: 108vw;
@@ -3288,6 +3398,7 @@
   .campaign-motion .nocturne-frame,
   .campaign-motion .kinetic-slab,
   .campaign-motion .kinetic-word,
+  .home-hero .home-orbit,
   .home-hero .home-signal-sweep,
   .home-hero .home-status-dot {
     animation: none;

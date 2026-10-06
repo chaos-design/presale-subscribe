@@ -91,7 +91,7 @@ in CI.
 | `src/components/` | Product components and shadcn/ui primitives |
 | `src/lib/` | Auth, queries, validation, presets, and Supabase helpers |
 | `src/types/database.ts` | Database and product types |
-| `public/brand/` | REPS brand artwork: seal, slogan badge, and home key visual |
+| `public/brand/` | REPS brand artwork: seal and slogan badge |
 | `supabase/platform.sql` | Repeatable all-in-one database and Storage initialization |
 | `supabase/update.sql` | Current pending subscription-entry and media Storage policy upgrade |
 | `tests/unit/` | Vitest unit coverage and SQL text assertions |
@@ -108,12 +108,11 @@ a visitor lacks a particular font:
 | --- | --- |
 | `reps-mark.svg` | The seal, used in navigation and the dashboard; its colors are fixed and it does not follow `currentColor` |
 | `reps-slogan.svg` | The slogan badge used at the top of both READMEs |
-| `reps-key-visual.svg` | The home key visual; it carries its own track rotation and disables it under `prefers-reduced-motion` |
 
 `src/app/icon.svg` and `src/app/apple-icon.png` are app-icon copies of the same seal and must stay in
 sync with `reps-mark.svg`. The share image is rendered at build time by `src/app/opengraph-image.tsx`.
-After changing any artwork run `pnpm check` and confirm the navigation, home key visual, and icons
-still render correctly.
+After changing any artwork run `pnpm check` and confirm the navigation and icons still render
+correctly.
 
 ## Product and source-link configuration
 
