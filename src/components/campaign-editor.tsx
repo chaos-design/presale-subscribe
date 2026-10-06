@@ -39,6 +39,7 @@ import {
   type FocusEvent,
   type FormEvent,
   type MouseEvent,
+  memo,
   useActionState,
   useEffect,
   useLayoutEffect,
@@ -519,7 +520,11 @@ async function createPreviewVideoPoster(file: File) {
   }
 }
 
-function PreviewDeviceFrame({
+/**
+ * 预览内部渲染一整页 CampaignPageShell（约 2300 个节点）。
+ * 编辑器每次按键都会重建 config，memo 让预览只在 config 引用变化时重渲染。
+ */
+const PreviewDeviceFrame = memo(function PreviewDeviceFrame({
   config,
   viewport,
   slug,
@@ -603,7 +608,7 @@ function PreviewDeviceFrame({
       </div>
     </div>
   )
-}
+})
 
 export function CampaignEditor({ campaign }: { campaign: Campaign }) {
   const router = useRouter()

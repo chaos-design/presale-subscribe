@@ -1,6 +1,14 @@
 "use client"
 
-import { type CSSProperties, useEffect, useId, useLayoutEffect, useRef, useState } from "react"
+import {
+  type CSSProperties,
+  memo,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react"
 
 import { CampaignPreview } from "@/components/campaign-preview"
 import { getCampaignTemplateScheme } from "@/lib/campaign-template-schemes"
@@ -9,7 +17,12 @@ import type { CampaignConfig } from "@/types/database"
 
 const templatePreviewWidth = 960
 
-export function CampaignTemplateThumbnail({
+/**
+ * 缩略图内部渲染一整个 CampaignPageShell（约 2300 个节点）。
+ * 模板选择器一次挂载 7 个，必须依赖引用稳定的 props 才能跳过父级重渲染，
+ * 否则在编辑器里逐字输入时会被反复重渲染。
+ */
+export const CampaignTemplateThumbnail = memo(function CampaignTemplateThumbnail({
   config,
   label,
   className,
@@ -160,4 +173,4 @@ export function CampaignTemplateThumbnail({
       )}
     </div>
   )
-}
+})

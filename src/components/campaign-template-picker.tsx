@@ -4,7 +4,7 @@ import { CheckIcon } from "lucide-react"
 
 import { CampaignTemplateThumbnail } from "@/components/campaign-template-thumbnail"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { createCampaignConfig, templateOptions } from "@/lib/campaign-presets"
+import { getTemplatePresetConfig, templateOptions } from "@/lib/campaign-presets"
 import { cn } from "@/lib/utils"
 import type { CampaignTemplate } from "@/types/database"
 
@@ -47,7 +47,7 @@ export function CampaignTemplatePicker({
             aria-label={`${option.label}：${option.description}`}
           >
             <CampaignTemplateThumbnail
-              config={createCampaignConfig(option.value)}
+              config={getTemplatePresetConfig(option.value)}
               label={option.label}
               className="campaign-template-picker-swatch new-campaign-template-swatch"
               decorative

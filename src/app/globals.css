@@ -3429,17 +3429,30 @@
   --campaign-heading-font: var(--font-manrope), sans-serif;
 }
 
-.campaign-page-grid {
+/*
+ * 网格层比可视区域大出一圈，滚动视差只驱动 transform，
+ * 避免逐帧重绘整页高度的蒙版渐变。溢出量必须大于视差位移（72px），
+ * 否则平移会露出边缘。裁剪层把网格限制回可视区域：
+ * 绝对定位子盒超出父级的部分仍会计入 scrollWidth/scrollHeight，
+ * overflow: clip 的中间层才能阻断这份溢出。
+ */
+.campaign-page-grid-layer {
   position: absolute;
   z-index: -1;
   inset: 0;
+  overflow: clip;
+  mask-image: linear-gradient(to bottom, black, transparent 38%, black 72%, transparent);
+  pointer-events: none;
+}
+
+.campaign-page-grid {
+  position: absolute;
+  inset: -96px;
   opacity: 0.2;
   background-image:
     linear-gradient(to right, var(--campaign-page-grid) 1px, transparent 1px),
     linear-gradient(to bottom, var(--campaign-page-grid) 1px, transparent 1px);
   background-size: 72px 72px;
-  mask-image: linear-gradient(to bottom, black, transparent 38%, black 72%, transparent);
-  pointer-events: none;
 }
 
 .campaign-page-header,

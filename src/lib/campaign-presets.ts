@@ -1039,6 +1039,26 @@ export function createCampaignConfig(template: CampaignTemplate): CampaignConfig
   }
 }
 
+const presetConfigCache = new Map<CampaignTemplate, CampaignConfig>()
+
+/**
+ * 只读的模板预设配置，引用在进程内稳定。
+ * createCampaignConfig 每次都深拷贝，调用方会就地修改返回值，不能直接缓存；
+ * 模板选择器等纯展示场景用这个函数，才能配合 memo 跳过重复渲染。严禁修改返回对象。
+ */
+export function getTemplatePresetConfig(template: CampaignTemplate): CampaignConfig {
+  const cached = presetConfigCache.get(template)
+
+  if (cached) {
+    return cached
+  }
+
+  const config = createCampaignConfig(template)
+  presetConfigCache.set(template, config)
+
+  return config
+}
+
 export function getThemeForeground(color: string) {
   const red = Number.parseInt(color.slice(1, 3), 16)
   const green = Number.parseInt(color.slice(3, 5), 16)
