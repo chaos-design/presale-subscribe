@@ -37,7 +37,7 @@ export function PasswordInput({
         type={visible ? "text" : "password"}
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className="h-full placeholder:text-xs"
+        className="h-full placeholder:text-sm"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={ariaInvalid}

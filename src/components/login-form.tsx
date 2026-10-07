@@ -13,6 +13,7 @@ import {
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { type FormEvent, type ReactNode, useEffect, useMemo, useRef, useState } from "react"
+import { toast } from "sonner"
 
 import { PasswordInput } from "@/components/password-input"
 import { PasswordStrength } from "@/components/password-strength"
@@ -179,6 +180,19 @@ export function LoginForm({
     initialError ? "form" : null
   )
   const [message, setMessage] = useState("")
+
+  // 表单级状态统一走 toast，内联 Alert 保留作为兜底可读面；合并通知避免连续失败刷屏。
+  useEffect(() => {
+    if (error) {
+      toast.error(error, { id: "login-form-status" })
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (message) {
+      toast.success(message, { id: "login-form-status" })
+    }
+  }, [message])
 
   useEffect(() => {
     if (cooldown <= 0) {
@@ -483,7 +497,7 @@ export function LoginForm({
                         type="email"
                         autoComplete="email"
                         placeholder="请输入登录邮箱"
-                        className="h-full placeholder:text-xs"
+                        className="h-full placeholder:text-sm"
                         value={passwordEmail}
                         onChange={(event) => {
                           setPasswordEmail(event.target.value)
@@ -569,7 +583,7 @@ export function LoginForm({
                         type="email"
                         autoComplete="email"
                         placeholder="请输入已注册邮箱"
-                        className="h-full placeholder:text-xs"
+                        className="h-full placeholder:text-sm"
                         value={otpEmail}
                         onChange={(event) => {
                           setOtpEmail(event.target.value)
@@ -617,7 +631,7 @@ export function LoginForm({
                           setOtpToken(event.target.value.replace(/\D/g, ""))
                           clearFeedback()
                         }}
-                        className="h-full font-mono text-base tracking-[0.35em] placeholder:text-xs placeholder:tracking-normal"
+                        className="h-full font-mono text-base tracking-[0.35em] placeholder:text-sm placeholder:tracking-normal"
                         aria-invalid={Boolean(fieldError("otpToken"))}
                         required
                       />
@@ -673,7 +687,7 @@ export function LoginForm({
                     type="email"
                     autoComplete="email"
                     placeholder="请输入常用邮箱"
-                    className="h-full placeholder:text-xs"
+                    className="h-full placeholder:text-sm"
                     value={registerEmail}
                     onChange={(event) => {
                       setRegisterEmail(event.target.value)
