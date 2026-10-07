@@ -7,7 +7,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { CampaignTemplateThumbnail } from "@/components/campaign-template-thumbnail"
 import { Button } from "@/components/ui/button"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { createCampaignConfig, templateOptions } from "@/lib/campaign-presets"
+import { getTemplatePresetConfig, templateOptions } from "@/lib/campaign-presets"
 import { cn } from "@/lib/utils"
 
 const slideDuration = 6
@@ -22,7 +22,7 @@ export function PageSystemsCarousel() {
   const directionRef = useRef(1)
   const isPausedRef = useRef(isPaused)
   const activeOption = templateOptions[activeIndex]
-  const activeConfig = createCampaignConfig(activeOption.value)
+  const activeConfig = getTemplatePresetConfig(activeOption.value)
   const animationKey = activeOption.value
 
   function selectSlide(index: number, direction = index > activeIndex ? 1 : -1) {
@@ -136,7 +136,7 @@ export function PageSystemsCarousel() {
             <span className="size-2 rounded-full bg-[#28c840]" />
           </div>
           <div className="min-w-0 flex-1 truncate rounded-sm bg-black/25 px-3 py-1 font-mono text-[9px] text-white/40">
-            ahead.page/release/{activeOption.value}
+            reps.page/release/{activeOption.value}
           </div>
           <span className="hidden font-mono text-[8px] uppercase text-white/35 sm:block">
             {activeOption.code} / COVER
@@ -235,7 +235,7 @@ export function PageSystemsCarousel() {
         <div className="flex w-max min-w-full gap-2">
           {templateOptions.map((option, index) => {
             const isActive = index === activeIndex
-            const config = createCampaignConfig(option.value)
+            const config = getTemplatePresetConfig(option.value)
 
             return (
               <button

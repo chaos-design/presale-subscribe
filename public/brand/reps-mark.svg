@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="REPS">
   <title>REPS</title>
+  <desc>Release, Email-capture, Preview &amp; Subscription</desc>
   <!-- red paper seal -->
   <path fill="#d9211f" d="M256 6Q391.3 120.8 506 256Q391.3 391.3 256 506Q120.8 391.3 6 256Q120.8 120.8 256 6Z" />
   <!-- scalloped inner frame, mirrored into all four quadrants -->

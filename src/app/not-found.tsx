@@ -25,7 +25,7 @@ export default function NotFound() {
               <FileQuestionIcon />
             </EmptyMedia>
             <EmptyTitle>页面不存在或已撤回</EmptyTitle>
-            <EmptyDescription>检查链接是否正确，或返回 Ahead 首页。</EmptyDescription>
+            <EmptyDescription>检查链接是否正确，或返回 REPS 首页。</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button nativeButton={false} render={<Link href="/" />}>

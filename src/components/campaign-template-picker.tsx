@@ -4,7 +4,7 @@ import { CheckIcon } from "lucide-react"
 
 import { CampaignTemplateThumbnail } from "@/components/campaign-template-thumbnail"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { createCampaignConfig, templateOptions } from "@/lib/campaign-presets"
+import { getTemplatePresetConfig, templateOptions } from "@/lib/campaign-presets"
 import { cn } from "@/lib/utils"
 import type { CampaignTemplate } from "@/types/database"
 
@@ -13,6 +13,8 @@ interface CampaignTemplatePickerProps {
   onValueChange: (value: CampaignTemplate) => void
   id?: string
   className?: string
+  /** 模板选择列表本身不是导航，只用缩略图区分开始。传 true 让所有缩略图渲染压缩版，避免 16 个完整页面壳占用几千节点。 */
+  compactThumbs?: boolean
 }
 
 export function CampaignTemplatePicker({
@@ -20,6 +22,7 @@ export function CampaignTemplatePicker({
   onValueChange,
   id,
   className,
+  compactThumbs = false,
 }: CampaignTemplatePickerProps) {
   return (
     <ToggleGroup
@@ -47,9 +50,10 @@ export function CampaignTemplatePicker({
             aria-label={`${option.label}：${option.description}`}
           >
             <CampaignTemplateThumbnail
-              config={createCampaignConfig(option.value)}
+              config={getTemplatePresetConfig(option.value)}
               label={option.label}
               className="campaign-template-picker-swatch new-campaign-template-swatch"
+              compact={compactThumbs}
               decorative
             />
             <span className="campaign-template-picker-copy">

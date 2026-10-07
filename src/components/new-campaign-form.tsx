@@ -4,7 +4,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { AppWindowMacIcon, ArrowLeftIcon } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useRef, useState } from "react"
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react"
 
 import { createCampaignAction } from "@/app/dashboard/actions"
 import { CampaignPreview } from "@/components/campaign-preview"
@@ -13,33 +13,42 @@ import { SubmitButton } from "@/components/submit-button"
 import { buttonVariants } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { createCampaignConfig, templateOptions } from "@/lib/campaign-presets"
+import { getTemplatePresetConfig, templateOptions } from "@/lib/campaign-presets"
 import type { CampaignTemplate } from "@/types/database"
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+}
 
 export function NewCampaignForm({ initialTemplate }: { initialTemplate: CampaignTemplate }) {
   const [template, setTemplate] = useState<CampaignTemplate>(initialTemplate)
   const formRef = useRef<HTMLFormElement>(null)
-  const selectedTemplate =
-    templateOptions.find((option) => option.value === template) ?? templateOptions[0]
-  const config = createCampaignConfig(template)
-  const motionScope = template
+  /**
+   * 预览是一整页 CampaignPageShell，换模板要重建两千多个节点，实测单次约 325ms。
+   * 这是"结果"而不是"操作"，所以降级为低优先级渲染：点击与表单输入先响应，
+   * 预览随后补齐，连续点击也会被合并。隐藏字段仍用即时值，提交的永远是用户真正选的模板。
+   */
+  const previewTemplate = useDeferredValue(template)
+  // 预览是纯展示场景，用引用稳定的只读预设，避免每次渲染深拷贝并重建整页预览。
+  const config = useMemo(() => getTemplatePresetConfig(previewTemplate), [previewTemplate])
+  const previewSelectedTemplate =
+    templateOptions.find((option) => option.value === previewTemplate) ?? templateOptions[0]
 
+  // 入场动画只跑一次。切换模板时重播它既没有信息量，又要把整页预览重新淡入，
+  // 反而拖慢用户对比模板，所以拆成两个 effect：一次性动效 + 随预览 DOM 重建的滚动动效。
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
-
     const root = formRef.current
-    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+
+    if (!root || prefersReducedMotion()) {
       return
     }
 
-    root.dataset.motionScope = motionScope
+    gsap.registerPlugin(ScrollTrigger)
+
     let context: gsap.Context | undefined
     const startFrame = window.requestAnimationFrame(() => {
       context = gsap.context(() => {
         const templateList = root.querySelector<HTMLElement>(".new-campaign-template-list")
-        const previewCanvas = root.querySelector<HTMLElement>(".new-campaign-preview-canvas")
-        const previewPage = previewCanvas?.querySelector<HTMLElement>(".campaign-page")
-        const progress = root.querySelector<HTMLElement>(".new-campaign-browser-progress")
         const visibleTemplateItems = Array.from(
           root.querySelectorAll<HTMLElement>(".new-campaign-template-option")
         ).filter((item) => getComputedStyle(item).display !== "none")
@@ -74,6 +83,8 @@ export function NewCampaignForm({ initialTemplate }: { initialTemplate: Campaign
             "-=0.45"
           )
 
+        // 缩略图的视差只依赖模板列表自身的滚动位置，与选中哪个模板无关，
+        // 因此留在一次性 effect 里，不必跟着模板反复重建。
         if (templateList && templateList.scrollHeight > templateList.clientHeight) {
           Array.from(
             templateList.querySelectorAll<HTMLElement>(".new-campaign-template-option")
@@ -95,72 +106,6 @@ export function NewCampaignForm({ initialTemplate }: { initialTemplate: Campaign
             )
           })
         }
-
-        if (previewCanvas && previewPage) {
-          previewCanvas
-            .querySelectorAll<HTMLElement>("[data-campaign-reveal]")
-            .forEach((section) => {
-              const targets = section.querySelectorAll<HTMLElement>(
-                ":scope > header, :scope > .campaign-page-section-index, :scope article, :scope li, :scope > .campaign-page-closing-grid"
-              )
-
-              if (targets.length > 0) {
-                gsap.from(targets, {
-                  opacity: 0,
-                  y: 22,
-                  duration: 0.55,
-                  stagger: 0.055,
-                  ease: "power3.out",
-                  immediateRender: false,
-                  clearProps: "opacity,transform",
-                  scrollTrigger: {
-                    trigger: section,
-                    scroller: previewCanvas,
-                    start: "top 88%",
-                    once: true,
-                  },
-                })
-              }
-            })
-
-          const heroImage = previewCanvas.querySelector<HTMLElement>(".campaign-page-image img")
-          if (heroImage) {
-            gsap.fromTo(
-              heroImage,
-              { yPercent: -3, scale: 1.035 },
-              {
-                yPercent: 4,
-                scale: 1,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: ".campaign-page-hero",
-                  scroller: previewCanvas,
-                  start: "top top",
-                  end: "bottom top",
-                  scrub: 0.65,
-                },
-              }
-            )
-          }
-
-          if (progress) {
-            gsap.fromTo(
-              progress,
-              { scaleX: 0 },
-              {
-                scaleX: 1,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: previewPage,
-                  scroller: previewCanvas,
-                  start: "top top",
-                  end: "bottom bottom",
-                  scrub: 0.25,
-                },
-              }
-            )
-          }
-        }
       }, root)
 
       ScrollTrigger.refresh()
@@ -169,9 +114,103 @@ export function NewCampaignForm({ initialTemplate }: { initialTemplate: Campaign
     return () => {
       window.cancelAnimationFrame(startFrame)
       context?.revert()
-      delete root.dataset.motionScope
     }
-  }, [motionScope])
+  }, [])
+
+  // 只负责预览画布内部的滚动动效。切换模板会换掉整棵预览 DOM，所以这里必须跟着
+  // previewTemplate 重建，但作用域收窄到画布，且不再调用全局 ScrollTrigger.refresh()。
+  // 依赖的是"预览 DOM 被换掉"这件事本身，effect 体内读不到 previewTemplate；
+  // 去掉它会让滚动动效停留在上一个模板已被卸载的节点上。
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 见上，previewTemplate 是刻意的重建信号
+  useEffect(() => {
+    const root = formRef.current
+    const previewCanvas = root?.querySelector<HTMLElement>(".new-campaign-preview-canvas")
+
+    if (!previewCanvas || prefersReducedMotion()) {
+      return
+    }
+
+    gsap.registerPlugin(ScrollTrigger)
+
+    let context: gsap.Context | undefined
+    const startFrame = window.requestAnimationFrame(() => {
+      context = gsap.context(() => {
+        const previewPage = previewCanvas.querySelector<HTMLElement>(".campaign-page")
+        const progress = root?.querySelector<HTMLElement>(".new-campaign-browser-progress")
+
+        if (!previewPage) {
+          return
+        }
+
+        previewCanvas.querySelectorAll<HTMLElement>("[data-campaign-reveal]").forEach((section) => {
+          const targets = section.querySelectorAll<HTMLElement>(
+            ":scope > header, :scope > .campaign-page-section-index, :scope article, :scope li, :scope > .campaign-page-closing-grid"
+          )
+
+          if (targets.length > 0) {
+            gsap.from(targets, {
+              opacity: 0,
+              y: 22,
+              duration: 0.55,
+              stagger: 0.055,
+              ease: "power3.out",
+              immediateRender: false,
+              clearProps: "opacity,transform",
+              scrollTrigger: {
+                trigger: section,
+                scroller: previewCanvas,
+                start: "top 88%",
+                once: true,
+              },
+            })
+          }
+        })
+
+        const heroImage = previewCanvas.querySelector<HTMLElement>(".campaign-page-image img")
+        if (heroImage) {
+          gsap.fromTo(
+            heroImage,
+            { yPercent: -3, scale: 1.035 },
+            {
+              yPercent: 4,
+              scale: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: ".campaign-page-hero",
+                scroller: previewCanvas,
+                start: "top top",
+                end: "bottom top",
+                scrub: 0.65,
+              },
+            }
+          )
+        }
+
+        if (progress) {
+          gsap.fromTo(
+            progress,
+            { scaleX: 0 },
+            {
+              scaleX: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: previewPage,
+                scroller: previewCanvas,
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 0.25,
+              },
+            }
+          )
+        }
+      }, previewCanvas)
+    })
+
+    return () => {
+      window.cancelAnimationFrame(startFrame)
+      context?.revert()
+    }
+  }, [previewTemplate])
 
   return (
     <form ref={formRef} action={createCampaignAction} className="new-campaign-layout">
@@ -202,6 +241,7 @@ export function NewCampaignForm({ initialTemplate }: { initialTemplate: Campaign
             value={template}
             onValueChange={setTemplate}
             className="new-campaign-template-list"
+            compactThumbs
           />
         </FieldSet>
 
@@ -217,11 +257,13 @@ export function NewCampaignForm({ initialTemplate }: { initialTemplate: Campaign
       <aside className="new-campaign-preview-pane">
         <div className="new-campaign-preview-heading">
           <div>
-            <p className="text-sm font-medium">{selectedTemplate.label}</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">{selectedTemplate.description}</p>
+            <p className="text-sm font-medium">{previewSelectedTemplate.label}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {previewSelectedTemplate.description}
+            </p>
           </div>
           <span className="font-mono text-[10px] text-muted-foreground">
-            {selectedTemplate.code}
+            {previewSelectedTemplate.code}
           </span>
         </div>
         <div className="new-campaign-browser">
@@ -238,9 +280,9 @@ export function NewCampaignForm({ initialTemplate }: { initialTemplate: Campaign
             </div>
             <AppWindowMacIcon aria-hidden="true" />
             <div className="new-campaign-browser-address">
-              <span>ahead.local/p/preview</span>
+              <span>reps.local/p/preview</span>
             </div>
-            <span>{selectedTemplate.code}</span>
+            <span>{previewSelectedTemplate.code}</span>
           </div>
           <div className="new-campaign-preview-canvas">
             <CampaignPreview config={config} interactive showQuestionnaire />

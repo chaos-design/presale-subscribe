@@ -12,7 +12,7 @@ describe("getPasswordStrength", () => {
   })
 
   it("accepts passwords that meet length and two additional categories", () => {
-    expect(getPasswordStrength("Ahead2026")).toMatchObject({
+    expect(getPasswordStrength("Reps2026")).toMatchObject({
       score: 3,
       isStrong: true,
       label: "较强",
@@ -20,7 +20,7 @@ describe("getPasswordStrength", () => {
   })
 
   it("marks passwords meeting every criterion as secure", () => {
-    expect(getPasswordStrength("Ahead@2026")).toMatchObject({
+    expect(getPasswordStrength("Reps@2026")).toMatchObject({
       score: 4,
       isStrong: true,
       label: "安全",

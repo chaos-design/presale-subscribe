@@ -330,10 +330,24 @@ function DashboardSidebar({ user }: { user: AppUser }) {
   )
 }
 
+/**
+ * 编辑器是一块全屏画布，不需要工作台外壳。
+ *
+ * 这里用路由判定而不是 CSS `:has(.campaign-studio)` 去嗅探子节点：App Router 流式渲染时
+ * 页面内容会先挂在 body 下的临时容器里，水合后才搬进 .dashboard-shell，`:has()` 要等搬完
+ * 才命中，侧栏于是先占位再消失，实测给编辑器带来 CLS 0.153（超出 0.1 预算）。
+ * usePathname 在服务端渲染时就可用，首屏即是终态布局。
+ */
+const studioRoutePattern = /^\/dashboard\/campaigns\/[^/]+\/edit\/?$/
+
 export function DashboardShell({ user, children }: { user: AppUser; children: React.ReactNode }) {
+  const pathname = usePathname()
+  const isStudioRoute = studioRoutePattern.test(pathname)
+
   return (
     <SidebarProvider
       className="dashboard-shell bg-background"
+      data-studio-route={isStudioRoute ? "true" : undefined}
       style={
         {
           "--sidebar-width": "13.75rem",

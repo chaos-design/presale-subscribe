@@ -4,7 +4,7 @@ import { LegalDocumentPage, type LegalSection } from "@/components/legal-documen
 
 export const metadata: Metadata = {
   title: "服务条款",
-  description: "Ahead 服务条款。",
+  description: "REPS 服务条款。",
 }
 
 const sections: readonly LegalSection[] = [
@@ -12,7 +12,7 @@ const sections: readonly LegalSection[] = [
     id: "acceptance",
     title: "接受与适用",
     paragraphs: [
-      "当你注册、登录、访问或使用 Ahead 时，即表示你已阅读、理解并同意本条款。若你不同意其中任何内容，请停止使用本服务。",
+      "当你注册、登录、访问或使用 REPS 时，即表示你已阅读、理解并同意本条款。若你不同意其中任何内容，请停止使用本服务。",
       "第三方部署方可以根据其实际服务补充条款；依法有效的补充条款由该部署方负责说明。",
     ],
   },
@@ -20,7 +20,7 @@ const sections: readonly LegalSection[] = [
     id: "service",
     title: "服务内容",
     paragraphs: [
-      "Ahead 提供功能预告页面创建、草稿编辑、发布快照、公开预约和订阅者管理能力。具体能力以你实际访问的版本为准。",
+      "REPS 提供功能预告页面创建、草稿编辑、发布快照、公开预约和订阅者管理能力。具体能力以你实际访问的版本为准。",
       "我们可能出于安全、合规、维护或产品演进需要调整、暂停或终止部分功能。",
     ],
   },
@@ -82,7 +82,7 @@ export default function TermsPage() {
       documentType="terms"
       eyebrow="LEGAL / TERMS"
       title="服务条款"
-      summary="这份条款说明你在使用 Ahead 创建、发布和管理功能预告时的权利、责任与使用边界。"
+      summary="这份条款说明你在使用 REPS 创建、发布和管理功能预告时的权利、责任与使用边界。"
       sections={sections}
     />
   )

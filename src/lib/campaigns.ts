@@ -6,7 +6,7 @@ import { createCampaignConfig, normalizeCampaignConfig } from "@/lib/campaign-pr
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import type { Campaign, PublicCampaign, Subscriber } from "@/types/database"
 
-export const demoCampaignSlug = "ahead-2-preview"
+export const demoCampaignSlug = "reps-release-preview"
 
 const subscriberSchema = z.object({
   id: z.string(),
@@ -40,7 +40,7 @@ const demoCampaigns: Campaign[] = [
   {
     id: "demo-launch",
     user_id: "demo-user",
-    name: "Ahead 2.0 功能预告",
+    name: "REPS 2.0 功能预告",
     slug: demoCampaignSlug,
     status: "published",
     draft_config: createCampaignConfig("launch"),

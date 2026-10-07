@@ -4,7 +4,7 @@ import { LegalDocumentPage, type LegalSection } from "@/components/legal-documen
 
 export const metadata: Metadata = {
   title: "隐私政策",
-  description: "Ahead 隐私政策。",
+  description: "REPS 隐私政策。",
 }
 
 const sections: readonly LegalSection[] = [
@@ -12,7 +12,7 @@ const sections: readonly LegalSection[] = [
     id: "scope",
     title: "适用范围",
     paragraphs: [
-      "本政策说明 Ahead 默认开源实现如何处理账号、活动内容和预约邮箱。第三方部署方应根据其实际地区、基础设施和业务用途提供补充说明。",
+      "本政策说明 REPS 默认开源实现如何处理账号、活动内容和预约邮箱。第三方部署方应根据其实际地区、基础设施和业务用途提供补充说明。",
     ],
   },
   {
@@ -23,7 +23,7 @@ const sections: readonly LegalSection[] = [
       "活动内容：项目名称、页面文案、图片地址、视觉设置、草稿和发布快照。",
       "预约信息：公开访问者主动提交的邮箱、所属活动和提交时间。",
       "访问统计：公开页面的访问时间、有效停留时长、最大滚动深度、交互次数、来源域名、UTM 参数、设备分类、浏览器语言、时区，以及经过单向散列处理的访客和会话标识。",
-      "粗粒度地域：优先读取部署平台根据请求网络提供的国家/地区/城市；字段缺失时，服务端会将访客 IP 临时发送给 IP 地理服务，仅将国家、地区和城市写入业务表。Ahead 不请求浏览器精确定位权限，也不保存原始 IP 地址。",
+      "粗粒度地域：优先读取部署平台根据请求网络提供的国家/地区/城市；字段缺失时，服务端会将访客 IP 临时发送给 IP 地理服务，仅将国家、地区和城市写入业务表。REPS 不请求浏览器精确定位权限，也不保存原始 IP 地址。",
       "必要日志：请求时间、接口结果和用于安全、排障的技术记录。",
     ],
   },
@@ -42,7 +42,7 @@ const sections: readonly LegalSection[] = [
     id: "storage",
     title: "存储与安全",
     paragraphs: [
-      "账号与业务数据存储于部署方配置的 Supabase。密码由 Supabase Auth 处理，Ahead 业务表不保存明文密码。",
+      "账号与业务数据存储于部署方配置的 Supabase。密码由 Supabase Auth 处理，REPS 业务表不保存明文密码。",
       "系统通过服务端身份复核、行级安全策略和受限公开 RPC 控制访问。匿名访问者不能直接读取活动表或订阅者表。",
     ],
   },
@@ -94,7 +94,7 @@ export default function PrivacyPage() {
       documentType="privacy"
       eyebrow="LEGAL / PRIVACY"
       title="隐私政策"
-      summary="这份政策说明 Ahead 在账号认证、活动发布和公开预约过程中如何处理信息。"
+      summary="这份政策说明 REPS 在账号认证、活动发布和公开预约过程中如何处理信息。"
       sections={sections}
     />
   )

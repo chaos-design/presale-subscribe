@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { IBM_Plex_Mono, Instrument_Serif, Manrope } from "next/font/google"
 
 import { AppProviders } from "@/components/app-providers"
+import { productConfig } from "@/lib/product-config"
 
 import "./globals.css"
 
@@ -27,16 +28,16 @@ export const metadata: Metadata = {
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"
   ),
   title: {
-    default: "Ahead · 功能预告订阅",
-    template: "%s · Ahead",
+    default: `${productConfig.name} · 功能预告订阅`,
+    template: `%s · ${productConfig.name}`,
   },
-  description: "创建、发布并管理功能预告订阅页，把每次产品上线变成一次有序抵达。",
-  applicationName: "Ahead",
-  keywords: ["功能预告", "订阅页面", "产品发布", "预约"],
+  description: `${productConfig.fullName}。${productConfig.tagline}。`,
+  applicationName: productConfig.name,
+  keywords: ["功能预告", "订阅页面", "产品发布", "预约", "REPS"],
   openGraph: {
     type: "website",
     locale: "zh_CN",
-    siteName: "Ahead",
+    siteName: productConfig.name,
   },
 }
 

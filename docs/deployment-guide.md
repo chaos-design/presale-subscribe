@@ -1,8 +1,8 @@
-# Ahead 部署手册
+# REPS 部署手册
 
 [English](./deployment-guide.en.md)
 
-本文说明 Ahead 在 Vercel 与 Supabase 上的生产部署流程。Vercel 的 Git 集成负责 `main`
+本文说明 REPS 在 Vercel 与 Supabase 上的生产部署流程。Vercel 的 Git 集成负责 `main`
 推送触发的自动生产部署；GitHub Actions 负责门禁、构建产物归档、受审批的生产发布与回滚。
 
 数据模型与安全边界见[架构说明](./architecture.md)，仓库权限与发布门禁见

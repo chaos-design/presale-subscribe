@@ -435,16 +435,23 @@ export function PublicCampaignMotion({ children }: { children: ReactNode }) {
 
       const pageGrid = rootRef.current?.querySelector<HTMLElement>(".campaign-page-grid")
       if (parallax && pageGrid && campaignPage) {
-        gsap.to(pageGrid, {
-          backgroundPosition: motion === "kinetic" ? "72px -36px" : "36px 72px",
-          ease: "none",
-          scrollTrigger: {
-            trigger: campaignPage,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: motion === "scan" ? 0.25 : 1,
-          },
-        })
+        // 位移量与原 background-position 动画一致（36px/72px），但只驱动 transform，
+        // 由合成器处理，避免逐帧重绘整页高度的蒙版渐变。inset:-96px 保证不露边。
+        gsap.fromTo(
+          pageGrid,
+          { x: 0, y: 0 },
+          {
+            x: motion === "kinetic" ? 72 : 36,
+            y: motion === "kinetic" ? -36 : 72,
+            ease: "none",
+            scrollTrigger: {
+              trigger: campaignPage,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: motion === "scan" ? 0.25 : 1,
+            },
+          }
+        )
       }
 
       const heroImage = rootRef.current?.querySelector<HTMLElement>(".campaign-page-image img")

@@ -13,6 +13,7 @@ import {
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { type FormEvent, type ReactNode, useEffect, useMemo, useRef, useState } from "react"
+import { toast } from "sonner"
 
 import { PasswordInput } from "@/components/password-input"
 import { PasswordStrength } from "@/components/password-strength"
@@ -130,17 +131,11 @@ function LegalAcceptance({
         className="flex flex-wrap gap-x-1 gap-y-0 font-normal text-muted-foreground"
       >
         <span>我已阅读并同意</span>
-        <Link
-          href="/terms"
-          className="font-medium text-foreground underline-offset-4 hover:underline"
-        >
+        <Link href="/terms" className="font-medium text-foreground hover:text-primary">
           《服务条款》
         </Link>
         <span>与</span>
-        <Link
-          href="/privacy"
-          className="font-medium text-foreground underline-offset-4 hover:underline"
-        >
+        <Link href="/privacy" className="font-medium text-foreground hover:text-primary">
           《隐私政策》
         </Link>
         {error ? (
@@ -185,6 +180,19 @@ export function LoginForm({
     initialError ? "form" : null
   )
   const [message, setMessage] = useState("")
+
+  // 表单级状态统一走 toast，内联 Alert 保留作为兜底可读面；合并通知避免连续失败刷屏。
+  useEffect(() => {
+    if (error) {
+      toast.error(error, { id: "login-form-status" })
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (message) {
+      toast.success(message, { id: "login-form-status" })
+    }
+  }, [message])
 
   useEffect(() => {
     if (cooldown <= 0) {
@@ -440,7 +448,7 @@ export function LoginForm({
       setRegisterEmail(email)
       setRegisterPassword("")
       setConfirmPassword("")
-      setMessage("确认链接已发送到你的邮箱。打开链接完成验证后，将自动登录 Ahead。")
+      setMessage("确认链接已发送到你的邮箱。打开链接完成验证后，将自动登录 REPS。")
       setIsSubmitting(false)
     } catch (signUpError) {
       setFieldError("registerEmail", getAuthErrorMessage(signUpError))
@@ -489,7 +497,7 @@ export function LoginForm({
                         type="email"
                         autoComplete="email"
                         placeholder="请输入登录邮箱"
-                        className="h-full placeholder:text-xs"
+                        className="h-full placeholder:text-sm"
                         value={passwordEmail}
                         onChange={(event) => {
                           setPasswordEmail(event.target.value)
@@ -575,7 +583,7 @@ export function LoginForm({
                         type="email"
                         autoComplete="email"
                         placeholder="请输入已注册邮箱"
-                        className="h-full placeholder:text-xs"
+                        className="h-full placeholder:text-sm"
                         value={otpEmail}
                         onChange={(event) => {
                           setOtpEmail(event.target.value)
@@ -623,7 +631,7 @@ export function LoginForm({
                           setOtpToken(event.target.value.replace(/\D/g, ""))
                           clearFeedback()
                         }}
-                        className="font-mono text-base tracking-[0.35em] placeholder:text-xs placeholder:tracking-normal"
+                        className="h-full font-mono text-base tracking-[0.35em] placeholder:text-sm placeholder:tracking-normal"
                         aria-invalid={Boolean(fieldError("otpToken"))}
                         required
                       />
@@ -679,7 +687,7 @@ export function LoginForm({
                     type="email"
                     autoComplete="email"
                     placeholder="请输入常用邮箱"
-                    className="h-full placeholder:text-xs"
+                    className="h-full placeholder:text-sm"
                     value={registerEmail}
                     onChange={(event) => {
                       setRegisterEmail(event.target.value)

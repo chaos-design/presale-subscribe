@@ -27,6 +27,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={
         {
+          "--width": "min(26rem, calc(100vw - 1.5rem))",
           "--normal-bg": "oklch(0.44 0.16 255)",
           "--normal-text": "oklch(0.98 0.01 255)",
           "--normal-border": "oklch(0.67 0.14 250)",

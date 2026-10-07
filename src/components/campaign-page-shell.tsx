@@ -523,7 +523,9 @@ export function CampaignPageShell({
         <span />
         <span />
       </div>
-      <div className="campaign-page-grid" aria-hidden="true" />
+      <div className="campaign-page-grid-layer" aria-hidden="true">
+        <div className="campaign-page-grid" />
+      </div>
 
       {config.header.enabled ? (
         <header className="campaign-page-header">

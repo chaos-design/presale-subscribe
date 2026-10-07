@@ -774,7 +774,7 @@ const pageContentByTemplate: Record<CampaignTemplate, CampaignPageContent> = {
 
 export const defaultCampaignConfig: CampaignConfig = {
   title: "下一次更新，先让你知道",
-  slogan: "Make what's next worth waiting for.",
+  slogan: "Every release, a way in.",
   description: "留下邮箱，在新功能开放的第一时间收到通知。没有噪音，只有重要进展。",
   featureTitle: "为真正关心更新的人准备",
   featureDescription:
@@ -796,12 +796,12 @@ export const defaultCampaignConfig: CampaignConfig = {
   sectionOrder: [...getCampaignTemplateScheme("launch").layout.sectionOrder],
   header: {
     enabled: true,
-    brandLabel: "AHEAD",
+    brandLabel: "REPS",
     metaLabel: getCampaignTemplateScheme("launch").code,
     showSlogan: true,
   },
   marquee: {
-    content: "Make what's next worth waiting for.",
+    content: "Every release, a way in.",
     infinite: true,
     speed: 24,
   },
@@ -1037,6 +1037,26 @@ export function createCampaignConfig(template: CampaignTemplate): CampaignConfig
     },
     countdown: { ...config.countdown },
   }
+}
+
+const presetConfigCache = new Map<CampaignTemplate, CampaignConfig>()
+
+/**
+ * 只读的模板预设配置，引用在进程内稳定。
+ * createCampaignConfig 每次都深拷贝，调用方会就地修改返回值，不能直接缓存；
+ * 模板选择器等纯展示场景用这个函数，才能配合 memo 跳过重复渲染。严禁修改返回对象。
+ */
+export function getTemplatePresetConfig(template: CampaignTemplate): CampaignConfig {
+  const cached = presetConfigCache.get(template)
+
+  if (cached) {
+    return cached
+  }
+
+  const config = createCampaignConfig(template)
+  presetConfigCache.set(template, config)
+
+  return config
 }
 
 export function getThemeForeground(color: string) {

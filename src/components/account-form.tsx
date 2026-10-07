@@ -8,7 +8,7 @@ import { SubmitButton } from "@/components/submit-button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { initialActionState } from "@/lib/validation"
+import { initialActionState } from "@/lib/action-state"
 
 export function AccountForm({ email, initialName }: { email: string; initialName: string }) {
   const [state, formAction] = useActionState(updateProfileAction, initialActionState)
@@ -22,6 +22,7 @@ export function AccountForm({ email, initialName }: { email: string; initialName
             id="full-name"
             name="fullName"
             defaultValue={initialName}
+            className="h-11"
             minLength={2}
             maxLength={48}
             autoComplete="name"

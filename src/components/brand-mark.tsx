@@ -1,4 +1,3 @@
-import { RadarIcon } from "lucide-react"
 import Link from "next/link"
 
 import { productConfig } from "@/lib/product-config"
@@ -17,9 +16,8 @@ export function BrandMark({
       className={cn("inline-flex items-center gap-2 font-mono text-sm font-medium", className)}
       aria-label={`${productConfig.name} 首页`}
     >
-      <span className="brand-mark-icon flex size-7 items-center justify-center rounded-md bg-foreground text-background">
-        <RadarIcon className="size-4" aria-hidden="true" />
-      </span>
+      {/* biome-ignore lint/performance/noImgElement: the seal has fixed colors and must stay an SVG asset */}
+      <img src="/brand/reps-mark.svg" alt="" className="brand-mark-seal size-7" />
       {compact ? null : <span className="brand-mark-wordmark">{productConfig.wordmark}</span>}
     </Link>
   )

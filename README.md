@@ -1,8 +1,14 @@
-# Ahead
+<p align="center">
+  <img src="./public/brand/reps-slogan.svg" alt="REPS — Release, Email-capture, Preview & Subscription" width="560" />
+</p>
+
+<h1 align="center">REPS</h1>
+
+<p align="center"><sub><b>Release, Email-capture, Preview & Subscription</b> — every release, a way in.</sub></p>
+
+REPS is a full-stack feature announcement and reservation system. Teams can create campaigns, edit draft content, publish immutable public versions, withdraw them, and collect subscriber emails with questionnaire responses through shareable pages.
 
 [简体中文](./README.zh-CN.md)
-
-Ahead is a full-stack feature announcement and reservation system. Teams can create campaigns, edit draft content, publish immutable public versions, withdraw them, and collect subscriber emails with questionnaire responses through shareable pages.
 
 ## Stack
 
@@ -72,7 +78,7 @@ complete SQL.
 2. Keep **Confirm email** enabled.
 3. In **Email Templates > Confirm signup**, render `{{ .ConfirmationURL }}`. Opening this link
    returns to `/auth/callback`, establishes the Supabase SSR session, and signs the user in.
-4. In **Email Templates > Magic Link**, render `{{ .Token }}`. Ahead uses this template only for
+4. In **Email Templates > Magic Link**, render `{{ .Token }}`. REPS uses this template only for
    numeric OTP login and verifies the code with `verifyOtp({ type: "email" })`.
 5. Keep the recovery template linked through `{{ .ConfirmationURL }}` so password reset requests
    return through `/auth/callback` and continue to `/reset-password`.

@@ -112,7 +112,7 @@ export default async function HomePage() {
         <div className="home-hero-frame relative z-10 mx-auto flex max-w-[1600px] flex-col px-4 py-7 sm:px-7 sm:py-9 lg:px-10">
           <div className="home-hero-readout" data-home-hero="meta">
             <div>
-              <span className="block text-white/80">AHEAD / BEFORE THE RELEASE</span>
+              <span className="block text-white/80">REPS / BEFORE THE RELEASE</span>
               <span className="mt-1 block">NEXT SIGNAL · READY WHEN YOU ARE</span>
             </div>
             <span className="hidden items-center gap-2 sm:flex">
@@ -128,7 +128,7 @@ export default async function HomePage() {
               <span>ANNOUNCE / ATTRACT / LISTEN</span>
             </div>
             <h1 className="home-hero-title font-display">
-              Ahead
+              {productConfig.name}
               <span aria-hidden="true">/ 01</span>
             </h1>
             <div className="home-hero-summary">

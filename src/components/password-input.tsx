@@ -30,14 +30,14 @@ export function PasswordInput({
   const [visible, setVisible] = useState(false)
 
   return (
-    <InputGroup>
+    <InputGroup className="h-11">
       <InputGroupInput
         id={id}
         name={name}
         type={visible ? "text" : "password"}
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className="placeholder:text-xs"
+        className="h-full placeholder:text-sm"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={ariaInvalid}

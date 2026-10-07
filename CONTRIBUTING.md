@@ -1,8 +1,8 @@
-# Contributing to Ahead
+# Contributing to REPS
 
 [简体中文](./CONTRIBUTING.zh-CN.md)
 
-Ahead is an open-source feature announcement and reservation system built with Next.js 16,
+REPS is an open-source feature announcement and reservation system built with Next.js 16,
 React 19, Supabase, Tailwind CSS 4, and Biome. This guide covers the local setup, the
 branch strategy enforced by CI, the quality gate every change must pass, and how database
 changes are shipped.

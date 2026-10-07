@@ -1,8 +1,14 @@
-# Ahead 功能预告订阅系统
+<p align="center">
+  <img src="./public/brand/reps-slogan.svg" alt="REPS — Release, Email-capture, Preview & Subscription" width="560" />
+</p>
+
+<h1 align="center">REPS 功能预告订阅系统</h1>
+
+<p align="center"><sub><b>Release, Email-capture, Preview & Subscription</b> — 每次发布，都留一个入口。</sub></p>
+
+REPS 是一个完整的功能预告与预约订阅系统。团队可以创建项目、编辑草稿、发布独立线上版本、撤回页面，并通过可分享链接收集订阅邮箱与问卷回答。
 
 [English](./README.md)
-
-Ahead 是一个完整的功能预告与预约订阅系统。团队可以创建项目、编辑草稿、发布独立线上版本、撤回页面，并通过可分享链接收集订阅邮箱与问卷回答。
 
 ## 技术栈
 
@@ -74,7 +80,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 3. 在 **Email Templates > Confirm signup** 中渲染 `{{ .ConfirmationURL }}`。用户打开
    链接后回到 `/auth/callback`，建立 Supabase SSR 会话并自动登录。
 4. 在 **Email Templates > Magic Link** 中渲染 `{{ .Token }}`。该模板只用于数字验证码
-   登录，Ahead 通过 `verifyOtp({ type: "email" })` 校验验证码。
+   登录，REPS 通过 `verifyOtp({ type: "email" })` 校验验证码。
 5. 保持 Recovery 模板使用 `{{ .ConfirmationURL }}`，密码重置请求会先经过
    `/auth/callback`，再进入 `/reset-password`。
 6. 将本地与生产环境的 `/auth/callback` 加入 Auth 重定向白名单。

@@ -47,7 +47,7 @@ export const getCurrentUser = cache(async (): Promise<AppUser | null> => {
   return {
     id,
     email,
-    name: profile?.full_name ?? metadataName ?? email.split("@")[0] ?? "Ahead 用户",
+    name: profile?.full_name ?? metadataName ?? email.split("@")[0] ?? "REPS 用户",
     avatarUrl: profile?.avatar_url ?? metadataAvatar,
     isDemo: false,
   }
@@ -56,7 +56,7 @@ export const getCurrentUser = cache(async (): Promise<AppUser | null> => {
 export function getDemoUser(): AppUser {
   return {
     id: "demo-user",
-    email: "demo@ahead.local",
+    email: "demo@reps.local",
     name: "演示工作区",
     avatarUrl: null,
     isDemo: true,

@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "登录",
-  description: "登录 Ahead 管理你的功能预告与订阅者。",
+  description: "登录 REPS 管理你的功能预告与订阅者。",
 }
 
 export default async function LoginPage({
@@ -68,7 +68,7 @@ export default async function LoginPage({
               “发布不是最后一步，它是期待被兑现的那一刻。”
             </p>
             <footer className="mt-6 font-mono text-[11px] uppercase text-white/65">
-              Ahead publishing notes
+              REPS publishing notes
             </footer>
           </blockquote>
         </div>
@@ -91,7 +91,7 @@ export default async function LoginPage({
                   <KeyRoundIcon aria-hidden="true" />
                 </div>
                 <div className="min-w-0">
-                  <CardTitle className="text-xl">进入 Ahead</CardTitle>
+                  <CardTitle className="text-xl">进入 REPS</CardTitle>
                   <CardDescription className="mt-1">
                     使用账号密码登录，新账号需完成邮箱确认。
                   </CardDescription>

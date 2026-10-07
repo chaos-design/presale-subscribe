@@ -1,8 +1,8 @@
-# Ahead Architecture
+# REPS Architecture
 
 [简体中文](./architecture.md)
 
-This document is for developers and operators. It describes Ahead's layer boundaries, data
+This document is for developers and operators. It describes REPS's layer boundaries, data
 model, RPC contract, and critical request flows. For product usage see the
 [user guide](./user-guide.en.md); for local setup see the
 [development guide](./development-guide.en.md); for production delivery see the
@@ -189,7 +189,7 @@ Without `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`:
 
 - No Supabase client is created, every page renders demo data from `src/lib/campaigns.ts`,
   writes return failure, and changes are lost on refresh.
-- The demo campaign uses the fixed slug `ahead-2-preview`, and reporting endpoints return
+- The demo campaign uses the fixed slug `reps-release-preview`, and reporting endpoints return
   `204` for it.
 - Playwright relies on this mode, so E2E tests never touch a database.
 

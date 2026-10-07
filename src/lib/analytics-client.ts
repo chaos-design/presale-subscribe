@@ -1,7 +1,7 @@
 "use client"
 
-const visitorStorageKey = "ahead:analytics:visitor:v1"
-const sessionStorageKey = "ahead:analytics:session:v1"
+const visitorStorageKey = "reps:analytics:visitor:v1"
+const sessionStorageKey = "reps:analytics:session:v1"
 const identifierPattern = /^[A-Za-z0-9_-]{16,128}$/
 
 function getOrCreateIdentifier(storage: Storage, key: string) {

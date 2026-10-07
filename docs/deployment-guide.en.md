@@ -1,8 +1,8 @@
-# Ahead Deployment Guide
+# REPS Deployment Guide
 
 [简体中文](./deployment-guide.md)
 
-This guide covers production deployment of Ahead on Vercel and Supabase. Vercel's Git
+This guide covers production deployment of REPS on Vercel and Supabase. Vercel's Git
 integration owns the automatic Production deployment triggered by a push to `main`. GitHub
 Actions owns the quality gate, build artifact retention, approval-gated production releases, and
 rollback.

@@ -1,8 +1,8 @@
-# 参与 Ahead 开发
+# 参与 REPS 开发
 
 [English](./CONTRIBUTING.md)
 
-Ahead 是一个基于 Next.js 16、React 19、Supabase、Tailwind CSS 4 与 Biome 的开源功能
+REPS 是一个基于 Next.js 16、React 19、Supabase、Tailwind CSS 4 与 Biome 的开源功能
 预告与预约订阅系统。本文说明本地环境、CI 强制的分支策略、每个变更必须通过的质量门禁，
 以及数据库变更的发布方式。
 

@@ -14,9 +14,9 @@ export function sanitizeRedirectPath(
   }
 
   try {
-    const url = new URL(value, "https://ahead.local")
+    const url = new URL(value, "https://reps.local")
 
-    return url.origin === "https://ahead.local"
+    return url.origin === "https://reps.local"
       ? `${url.pathname}${url.search}${url.hash}`
       : fallback
   } catch {

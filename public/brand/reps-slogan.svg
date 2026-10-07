@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" width="720" height="220" role="img" aria-label="REPS — Every release, a way in. Release, Email-capture, Preview &amp; Subscription">
+  <title>REPS</title>
+  <desc>Release, Email-capture, Preview &amp; Subscription — Every release, a way in.</desc>
+
+  <rect width="720" height="220" rx="22" fill="#0d0f0e" />
+  <rect x="0.5" y="0.5" width="719" height="219" rx="21.5" fill="none" stroke="#ffffff" stroke-opacity="0.12" />
+
+  <!-- seal -->
+  <g transform="translate(28 36) scale(0.2891)">
+    <path fill="#d9211f" d="M256 6Q391.3 120.8 506 256Q391.3 391.3 256 506Q120.8 391.3 6 256Q120.8 120.8 256 6Z" />
+    <g fill="none" stroke="#fff8f2" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M256 39Q273.2 76 283.1 66.1Q293 56.2 310.3 93.3Q327.5 130.3 337.4 120.4Q347.3 110.5 364.5 147.5Q381.7 184.5 391.6 174.6Q401.5 164.7 418.8 201.8Q436 238.8 445.9 228.9Q455.8 219 473 256" />
+      <path d="M256 39Q273.2 76 283.1 66.1Q293 56.2 310.3 93.3Q327.5 130.3 337.4 120.4Q347.3 110.5 364.5 147.5Q381.7 184.5 391.6 174.6Q401.5 164.7 418.8 201.8Q436 238.8 445.9 228.9Q455.8 219 473 256" transform="rotate(90 256 256)" />
+      <path d="M256 39Q273.2 76 283.1 66.1Q293 56.2 310.3 93.3Q327.5 130.3 337.4 120.4Q347.3 110.5 364.5 147.5Q381.7 184.5 391.6 174.6Q401.5 164.7 418.8 201.8Q436 238.8 445.9 228.9Q455.8 219 473 256" transform="rotate(180 256 256)" />
+      <path d="M256 39Q273.2 76 283.1 66.1Q293 56.2 310.3 93.3Q327.5 130.3 337.4 120.4Q347.3 110.5 364.5 147.5Q381.7 184.5 391.6 174.6Q401.5 164.7 418.8 201.8Q436 238.8 445.9 228.9Q455.8 219 473 256" transform="rotate(270 256 256)" />
+    </g>
+    <g fill="#fff8f2">
+      <circle cx="256" cy="39" r="10.5" />
+      <circle cx="473" cy="256" r="10.5" />
+      <circle cx="256" cy="473" r="10.5" />
+      <circle cx="39" cy="256" r="10.5" />
+    </g>
+    <g fill="none" stroke="#fff8f2" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <g transform="translate(142 142)">
+        <path d="M20 90V10H56Q78 10 78 33T56 56H20M52 56 80 90" />
+      </g>
+      <g transform="translate(270 142)">
+        <path d="M22 10V90M22 10H78M22 50H68M22 90H78" />
+      </g>
+      <g transform="translate(142 270)">
+        <path d="M24 90V10H56Q78 10 78 32T56 54H24" />
+      </g>
+      <g transform="translate(270 270)">
+        <path d="M76 24Q69 10 49 10Q24 10 24 31Q24 50 50 50Q76 50 76 69Q76 90 50 90Q28 90 21 76" />
+      </g>
+    </g>
+  </g>
+
+  <!-- wordmark -->
+  <g fill="none" stroke="#f7f7f2" stroke-width="12.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(216 48) scale(0.78)">
+    <g>
+      <path d="M20 90V10H56Q78 10 78 33T56 56H20M52 56 80 90" />
+    </g>
+    <g transform="translate(78 0)">
+      <path d="M22 10V90M22 10H78M22 50H68M22 90H78" />
+    </g>
+    <g transform="translate(156 0)">
+      <path d="M24 90V10H56Q78 10 78 32T56 54H24" />
+    </g>
+    <g transform="translate(234 0)">
+      <path d="M76 24Q69 10 49 10Q24 10 24 31Q24 50 50 50Q76 50 76 69Q76 90 50 90Q28 90 21 76" />
+    </g>
+  </g>
+
+  <path d="M216 128H688" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1" />
+
+  <g font-family="ui-monospace, 'IBM Plex Mono', 'SF Mono', Menlo, monospace" font-weight="500">
+    <text x="216" y="158" fill="#c6ff3e" font-size="23" letter-spacing="3" textLength="472" lengthAdjust="spacing">EVERY RELEASE, A WAY IN.</text>
+    <text x="216" y="184" fill="#f7f7f2" fill-opacity="0.42" font-size="13" letter-spacing="1.5">RELEASE · EMAIL-CAPTURE · PREVIEW · SUBSCRIPTION</text>
+  </g>
+</svg>
