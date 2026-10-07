@@ -41,8 +41,10 @@ import {
   type MouseEvent,
   memo,
   useActionState,
+  useDeferredValue,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react"
@@ -83,17 +85,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { TimePicker } from "@/components/ui/time-picker"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { initialActionState } from "@/lib/action-state"
 import {
-  createCampaignConfig,
   defaultCampaignImagePosition,
   getMotionOptionsForTemplate,
+  getTemplatePresetConfig,
   isMotionAvailableForTemplate,
   templateOptions,
   themeOptions,
 } from "@/lib/campaign-presets"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
-import { initialActionState } from "@/lib/validation"
 import type {
   Campaign,
   CampaignConfig,
@@ -646,6 +648,43 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
   const templatePickerId = "campaign-template-picker"
   const sectionOrganizerId = "campaign-section-organizer"
   const collapsedPanelsStorageKey = `reps:campaign-editor:collapsed:${campaign.id}`
+  /**
+   * 表单里 11 个隐藏字段每次渲染都要 JSON.stringify 一遍 config 的各个子树，其中
+   * questionnaire 与 pageContent 最大。updateConfig 只替换顶层 key，子树引用保持不变，
+   * 所以按子树 memo 后，改标题这类按键不会重跑任何一次序列化。
+   */
+  const serializedConfig = useMemo(
+    () => ({
+      coverImagePosition: JSON.stringify(config.coverImagePosition),
+      previewVideo: JSON.stringify(config.previewVideo),
+      motionSettings: JSON.stringify(config.motionSettings),
+      questionnaire: JSON.stringify(config.questionnaire),
+      pageContent: JSON.stringify(config.pageContent),
+      sectionVisibility: JSON.stringify(config.sectionVisibility),
+      sectionOrder: JSON.stringify(config.sectionOrder),
+      header: JSON.stringify(config.header),
+      marquee: JSON.stringify(config.marquee),
+      countdown: JSON.stringify(config.countdown),
+    }),
+    [
+      config.coverImagePosition,
+      config.previewVideo,
+      config.motionSettings,
+      config.questionnaire,
+      config.pageContent,
+      config.sectionVisibility,
+      config.sectionOrder,
+      config.header,
+      config.marquee,
+      config.countdown,
+    ]
+  )
+  /**
+   * 预览是一整页 CampaignPageShell，两千多个节点。它是"结果"不是"操作"，
+   * 降级为低优先级渲染：按键与输入先落地，预览随后补齐，连续输入会被合并，
+   * 交互延迟因此不再随预览重建耗时同步上涨。表单与隐藏字段仍用即时值，提交不受影响。
+   */
+  const previewConfig = useDeferredValue(config)
   const activeBodySectionCount =
     config.sectionOrder.filter(
       (section) =>
@@ -1025,7 +1064,11 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
   }
 
   function selectTemplate(template: CampaignTemplate) {
-    const preset = createCampaignConfig(template)
+    // 只读预设引用稳定，这里只读 motion / sectionOrder / header.metaLabel，
+    // 不需要 createCampaignConfig 的整份深拷贝（原来一次切换要深拷贝两遍）。
+    // sectionOrder 必须复制一份再放进 config：预设是跨调用共享的缓存，
+    // 而节���排序器会把新顺序写回这个字段，直接别名会污染缓存。
+    const preset = getTemplatePresetConfig(template)
 
     setConfig((current) => ({
       ...current,
@@ -1033,11 +1076,11 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
       motion: isMotionAvailableForTemplate(template, current.motion)
         ? current.motion
         : preset.motion,
-      sectionOrder: preset.sectionOrder,
+      sectionOrder: [...preset.sectionOrder],
       header: {
         ...current.header,
         metaLabel:
-          current.header.metaLabel === createCampaignConfig(current.template).header.metaLabel
+          current.header.metaLabel === getTemplatePresetConfig(current.template).header.metaLabel
             ? preset.header.metaLabel
             : current.header.metaLabel,
       },
@@ -1280,24 +1323,16 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
       <input type="hidden" name="slogan" value={config.slogan} />
       <input type="hidden" name="themeColor" value={config.themeColor} />
       <input type="hidden" name="motion" value={config.motion} />
-      <input
-        type="hidden"
-        name="coverImagePosition"
-        value={JSON.stringify(config.coverImagePosition)}
-      />
-      <input type="hidden" name="previewVideo" value={JSON.stringify(config.previewVideo)} />
-      <input type="hidden" name="motionSettings" value={JSON.stringify(config.motionSettings)} />
-      <input type="hidden" name="questionnaire" value={JSON.stringify(config.questionnaire)} />
-      <input type="hidden" name="pageContent" value={JSON.stringify(config.pageContent)} />
-      <input
-        type="hidden"
-        name="sectionVisibility"
-        value={JSON.stringify(config.sectionVisibility)}
-      />
-      <input type="hidden" name="sectionOrder" value={JSON.stringify(config.sectionOrder)} />
-      <input type="hidden" name="header" value={JSON.stringify(config.header)} />
-      <input type="hidden" name="marquee" value={JSON.stringify(config.marquee)} />
-      <input type="hidden" name="countdown" value={JSON.stringify(config.countdown)} />
+      <input type="hidden" name="coverImagePosition" value={serializedConfig.coverImagePosition} />
+      <input type="hidden" name="previewVideo" value={serializedConfig.previewVideo} />
+      <input type="hidden" name="motionSettings" value={serializedConfig.motionSettings} />
+      <input type="hidden" name="questionnaire" value={serializedConfig.questionnaire} />
+      <input type="hidden" name="pageContent" value={serializedConfig.pageContent} />
+      <input type="hidden" name="sectionVisibility" value={serializedConfig.sectionVisibility} />
+      <input type="hidden" name="sectionOrder" value={serializedConfig.sectionOrder} />
+      <input type="hidden" name="header" value={serializedConfig.header} />
+      <input type="hidden" name="marquee" value={serializedConfig.marquee} />
+      <input type="hidden" name="countdown" value={serializedConfig.countdown} />
 
       <header className="campaign-studio-header sticky top-0 z-20 flex min-h-16 flex-wrap items-center justify-between gap-3 border-b bg-background/92 px-3 py-3 backdrop-blur-md sm:px-6 min-[1180px]:pl-0 lg:pr-8">
         <div className="campaign-studio-header-leading flex min-w-0 items-center">
@@ -2441,7 +2476,7 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
                 onClickCapture={handlePreviewClick}
               >
                 <PreviewDeviceFrame
-                  config={config}
+                  config={previewConfig}
                   viewport={previewViewport}
                   slug={campaign.slug}
                   activeEditorTarget={previewMode === "edit" ? activePreviewTarget : undefined}
@@ -2504,7 +2539,7 @@ export function CampaignEditor({ campaign }: { campaign: Campaign }) {
               }}
             >
               <PreviewDeviceFrame
-                config={config}
+                config={previewConfig}
                 viewport={previewViewport}
                 slug={campaign.slug}
                 interactive

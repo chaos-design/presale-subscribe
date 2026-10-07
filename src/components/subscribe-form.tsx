@@ -19,12 +19,12 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
+import { initialActionState } from "@/lib/action-state"
 import { getAnalyticsIdentifiers } from "@/lib/analytics-client"
 import { getThemeForeground } from "@/lib/campaign-presets"
 import type { CampaignSubscriptionLayout } from "@/lib/campaign-template-schemes"
 import { commonEmailDomainError, isCommonEmailAddress } from "@/lib/common-email-domains"
 import { cn } from "@/lib/utils"
-import { initialActionState } from "@/lib/validation"
 import type { CampaignQuestion, CampaignQuestionnaire, CampaignTemplate } from "@/types/database"
 
 interface SubscribeFormProps {

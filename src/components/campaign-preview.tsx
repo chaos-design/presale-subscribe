@@ -1,5 +1,5 @@
 import { ArrowRightIcon, MailIcon } from "lucide-react"
-import type { CSSProperties } from "react"
+import { type CSSProperties, memo } from "react"
 
 import { CampaignPageShell } from "@/components/campaign-page-shell"
 import { SubscribeFormPreview } from "@/components/subscribe-form"
@@ -127,7 +127,11 @@ function CampaignThumbnailSubscription({ config }: { config: CampaignConfig }) {
   )
 }
 
-export function CampaignPreview({
+/**
+ * 内部是一整页 CampaignPageShell（两千多个节点），而它只吃原始值与 config 引用。
+ * 加上 memo 后，父组件因为别的原因重渲染时不会连带重建整页预览。
+ */
+export const CampaignPreview = memo(function CampaignPreview({
   config,
   activeEditorTarget,
   className,
@@ -179,4 +183,4 @@ export function CampaignPreview({
       }
     />
   )
-}
+})

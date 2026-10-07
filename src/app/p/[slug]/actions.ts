@@ -2,11 +2,11 @@
 
 import { headers } from "next/headers"
 import { z } from "zod"
-
+import { type ActionState, initialActionState } from "@/lib/action-state"
 import { demoCampaignSlug, getPublicCampaign } from "@/lib/campaigns"
 import { resolveRequestLocation } from "@/lib/request-location"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
-import { type ActionState, emailSchema, initialActionState } from "@/lib/validation"
+import { emailSchema } from "@/lib/validation"
 import type { CampaignQuestionAnswers, CampaignQuestionnaire, Json } from "@/types/database"
 
 const subscribeSchema = z.object({

@@ -18,9 +18,8 @@ import type { CampaignConfig } from "@/types/database"
 const templatePreviewWidth = 960
 
 /**
- * 缩略图内部渲染一整个 CampaignPageShell（约 2300 个节点）。
- * 模板选择器一次挂载 7 个，必须依赖引用稳定的 props 才能跳过父级重渲染，
- * 否则在编辑器里逐字输入时会被反复重渲染。
+ * 缩略图内部渲染一整个 CampaignPageShell。模板选择器一次铺十几个，
+ * 必须依赖引用稳定的 props 才能跳过父级重渲染，否则在编辑器里逐字输入时会被反复重渲染。
  */
 export const CampaignTemplateThumbnail = memo(function CampaignTemplateThumbnail({
   config,
@@ -67,9 +66,18 @@ export const CampaignTemplateThumbnail = memo(function CampaignTemplateThumbnail
     "--template-placeholder-accent": config.themeColor,
   } as CSSProperties
 
+  // 单向挂载：进入视口才渲染整页壳。
+  //
+  // 这里刻意保持单向。实测过两个"看起来更优"的方案，都更差：
+  // - content-visibility: auto —— 滚动从 104ms/帧降到 30ms/帧，但换模板时
+  //   16 个大子树每次都要重算 relevance，切模板从 0.6s 恶化到 16–44s。
+  // - 进出双向卸载 —— 稳态 DOM 从 4780 降到 2220 节点，但滚动变成 28ms/帧
+  //   且每次滚动新增 4 个长任务，因为挂载/卸载整页壳本身比绘制更贵。
+  // 结论：缩略图的成本只能靠"渲染更便宜的替身"来降，那是重设计，不是微优化。
   useEffect(() => {
     const frame = frameRef.current
 
+    // eager 的实例（首页大图）一开始就要渲染。
     if (shouldRender || !frame) {
       return
     }

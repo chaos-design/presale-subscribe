@@ -3,12 +3,12 @@
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { z } from "zod"
-
+import { type ActionState, initialActionState } from "@/lib/action-state"
 import { deleteCampaignMedia } from "@/lib/campaign-media"
 import { createCampaignConfig } from "@/lib/campaign-presets"
 import { createCampaignVersion } from "@/lib/campaign-version"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
-import { type ActionState, campaignConfigSchema, initialActionState } from "@/lib/validation"
+import { campaignConfigSchema } from "@/lib/validation"
 import { type CampaignConfig, campaignTemplateValues } from "@/types/database"
 
 const campaignNameSchema = z.string().trim().min(2).max(80)
