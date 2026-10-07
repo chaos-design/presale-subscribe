@@ -475,7 +475,7 @@
 }
 
 .campaign-studio,
-.dashboard-shell:has(.campaign-studio) {
+.dashboard-shell[data-studio-route="true"] {
   color-scheme: dark;
   color: var(--foreground);
   --background: oklch(0.135 0.012 190);
@@ -506,13 +506,13 @@
   --sidebar-ring: oklch(0.78 0.14 190);
 }
 
-.dashboard-shell:has(.campaign-studio) > .dashboard-sidebar,
-.dashboard-shell:has(.campaign-studio) > .dashboard-mobile-header,
-.dashboard-shell:has(.campaign-studio) > .dashboard-header {
+.dashboard-shell[data-studio-route="true"] > .dashboard-sidebar,
+.dashboard-shell[data-studio-route="true"] > .dashboard-mobile-header,
+.dashboard-shell[data-studio-route="true"] > .dashboard-header {
   display: none;
 }
 
-.dashboard-shell:has(.campaign-studio) > .dashboard-content {
+.dashboard-shell[data-studio-route="true"] > .dashboard-content {
   padding-left: 0;
 }
 
@@ -904,7 +904,6 @@
 }
 
 .home-site-footer-masthead > strong {
-  overflow: hidden;
   grid-column: 1 / -1;
   align-self: end;
   padding-inline: 1rem;
@@ -912,7 +911,15 @@
   font-family: var(--font-instrument-serif), "Songti SC", serif;
   font-size: 12rem;
   font-weight: 400;
+  /*
+   * line-height 0.7 的行盒只有 0.7em，而 Instrument Serif 的字身框约 1.3em，
+   * 大写字母顶部会溢出约 0.04em。原来这里的 overflow: hidden 会把它整片切平，
+   * 视觉上就是 REPS 的上缘被削掉。这里改用 clip + 允许少量溢出，字形保持完整，
+   * 同时仍然兜住字体回退时的极端溢出（父级 .home-site-footer 也会裁切）。
+   */
   line-height: 0.7;
+  overflow: clip;
+  overflow-clip-margin: 0.25em;
 }
 
 .home-site-footer-baseline {
@@ -9563,12 +9570,12 @@ a.campaign-page-footer-github:focus-visible {
   }
 }
 
-.dashboard-shell:has(.campaign-studio) > [data-slot="sidebar"],
-.dashboard-shell:has(.campaign-studio) > .dashboard-main > .dashboard-header {
+.dashboard-shell[data-studio-route="true"] > [data-slot="sidebar"],
+.dashboard-shell[data-studio-route="true"] > .dashboard-main > .dashboard-header {
   display: none;
 }
 
-.dashboard-shell:has(.campaign-studio) > .dashboard-main {
+.dashboard-shell[data-studio-route="true"] > .dashboard-main {
   width: 100%;
 }
 
