@@ -241,6 +241,7 @@ export function NewCampaignForm({ initialTemplate }: { initialTemplate: Campaign
             value={template}
             onValueChange={setTemplate}
             className="new-campaign-template-list"
+            compactThumbs
           />
         </FieldSet>
 
